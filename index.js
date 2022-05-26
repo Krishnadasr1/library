@@ -16,7 +16,7 @@ app.use('/koha/library',require('./routes/libraryRoutes'))
 app.use('/user',require('./routes/userRoutes'))
 app.use('/admin',require('./routes/adminRoutes'))
 app.use('/boy',require('./routes/boyRoutes'))
-app.use('/member',require('./routes/wardMemberRoutes'))
+app.use('/member',require('./routes/memberRoutes'))
 
 
 

@@ -1,58 +1,50 @@
-const Deliveryboy = require("../models/deliveryboy");
-const WardMember = require("../models/wardmember");
+const Boy = require("../models/boy");
+const Delivery = require("../models/delivery");
 
 const bcrypt = require('bcryptjs');
+const user = require("../models/user");
 //const jwt = require("jsonwebtoken");
 //const _ = require("lodash");
 //const otpGenerator = require("otp-generator");
 
 
-const LoginDeliveryboy = (data) => {
-    return new Promise(async (resolve, reject) => {
-      Deliveryboy.find({ phoneNumber:data.phoneNumber })
-      .exec()
-      .then(deliveryboy => {
-        if (deliveryboy.length < 1) {
+const LoginUser = (data) => {
+  return new Promise((resolve,reject) =>{
+    Boy.find({phone_number: data.phone_number}).exec()
+    .then(user =>{
+      if(user.length < 1){
+        reject({
+          message:"No User Exist"
+        })
+      }
+
+      bcrypt.compare(data.password,user[0].password, (err,resp) =>{
+        if(err) {
           reject({
-            message: "No user Exist",
-          });
-        } 
-             bcrypt.compare(data.password, deliveryboy[0].password, (err, resp) => {
-            if (err) {
-              reject({
-                message: "Authentication failed... Incorrect password",
-              });
-            }
-            if (resp) {
-              Deliveryboy.findOneAndUpdate(
-              { phoneNumber: data.phoneNumber },
-                { status: "true" }
-              ).exec();
-              resolve({
-                message: "Success",
-  
-                deliveryboy: JSON.stringify(deliveryboy),
-              });
-            }
-          resolve({
-            message:"Successfully logged in",
-           })
-             })
+            message:"Authentication failed... Incorrect password"
           })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    
-  }
+        }
+        if(resp){
+          resolve({
+            message:"success",
+            user:user
+           
+          })
+        }
+        reject({
+          err,
+          message:"Authentication failed"
+        })
+      })
+    }).catch(err=>{
+      reject(err)
+    })
+  })
+  };
  
-
-
-  const Uploadphoto = (data, data1) => {
+  const GetUser = (data) => {
     return new Promise(async (resolve, reject) => {
-      console.log(data);
-      console.log(data1);
-      Deliveryboy.findOneAndUpdate({ _id: data.id }, { image: data1.path })
+        Boy.findOne({ _id: data.id })
         .then((resp) => {
           console.log(resp);
           resolve(resp);
@@ -62,10 +54,10 @@ const LoginDeliveryboy = (data) => {
         });
     });
   };
-  
-  const GetDeliveryboy = (data) => {
+ 
+  const GetCheckoutList = (data) => {
     return new Promise(async (resolve, reject) => {
-        Deliveryboy.findOne({ _id: data.id })
+        Delivery.find({ ward_number: data.ward_number })
         .then((resp) => {
           console.log(resp);
           resolve(resp);
@@ -75,10 +67,9 @@ const LoginDeliveryboy = (data) => {
         });
     });
   };
-  const UpdateDeliveryboy = (data) => {
-    console.log(data);
+  const GetReturnList = (data) => {
     return new Promise(async (resolve, reject) => {
-        Deliveryboy.findOneAndUpdate({ _id: data.id }, data)
+        Delivery.find({ ward_number: data.ward_number })
         .then((resp) => {
           console.log(resp);
           resolve(resp);
@@ -88,12 +79,38 @@ const LoginDeliveryboy = (data) => {
         });
     });
   };
-  
+  const OrderPlaced = (data) => {
+    return new Promise(async (resolve, reject) => {
+      await  Delivery.findOneAndUpdate({ _id: data.order_id },{checkout_status:"Closed"})
+        .then((resp) => {
+         // console.log(resp);
+          resolve(resp);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
+  const ReturnDone = (data) => {
+    return new Promise(async (resolve, reject) => {
+        Delivery.findOneAndUpdate({ _id: data.order_id },{return_status:"Closed"})
+        .then((resp) => {
+          console.log(resp);
+          resolve(resp);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
 
 
 module.exports = {
-    LoginDeliveryboy, 
-    Uploadphoto,
-    GetDeliveryboy,
-    UpdateDeliveryboy    
+  LoginUser,
+  GetUser,
+  GetCheckoutList,
+   OrderPlaced,
+   GetReturnList,
+   ReturnDone
+     
 }

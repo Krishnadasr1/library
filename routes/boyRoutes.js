@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const { 
-        LoginBoy,
-        getCheckoutList,
+        LoginUser,
+        GetUser,
+        GetCheckoutList,
+        OrderPlaced,
+        GetReturnList,
+        ReturnDone
 
          } = require("../controllers/boyControllers");
 
@@ -16,35 +20,35 @@ router.post("/login",(req, res) => {
   })
 });
 router.post("/get-boy",(req, res) => {
-    LoginUser(req.body).then(resp => {
+    GetUser(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
   });
-router.get("/get_checkout_list",(req, res) => {
-    GetUserById(req.body).then(resp => {
+router.post("/get_checkout_list",(req, res) => {
+    GetCheckoutList(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
   });
   router.post("/order_placed",(req, res) => {
-    GetUserByEmail(req.body).then(resp => {
+    OrderPlaced(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
   });
-  router.get("/get_return_list",(req, res) => {
-    GetAll().then(resp => {
+  router.post("/get_return_list",(req, res) => {
+    GetReturnList(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
   });
   router.post("/return_done",(req, res) => {
-    UpdateUser(req.body).then(resp => {
+    ReturnDone(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
