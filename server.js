@@ -2,7 +2,7 @@ const { PORT } = require("./helpers/config");
 const app = require("./index");
 require("dotenv").config();
 const mongoose = require("mongoose");
-mongoose.connect(`${process.env.DB_URL}/koha_database`, {
+mongoose.connect(`${process.env.DB_URL}/Library`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

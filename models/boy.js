@@ -1,44 +1,44 @@
 const mongoose = require('mongoose')
 
-const deliveryboySchema = new mongoose.Schema({
+const boySchema = new mongoose.Schema({
 
-    image: {
-        type: String
-    },
     name: {
         type: String,
         required: true,
-        minlength: 4,
-        maxlength: 10,
-        match: /^[a-zA-Z]/,
-        unique: true
 
     },
     address: {
        type: String,
-       required: true
+      // required: true
    },
    password: {
     type: String,
     required: true
 },
-    wardMemberId: {
+    member_id: {
         type: String,
         required: true
     },
-    wardNumber: {
+    ward_number: {
         type: String,
         required: true
     },
     status:{
         type:String
     },
-    phoneNumber: {
+    phone_number: {
         type: String,
        // required: true,
         match: /^\d{10}$/
-    }
+    },
+    checkout_list:{
+        type:Array
+    },
+    return_list:{
+        type:Array
+    },
+
 }, {timestamps: true})
  
 
-module.exports = mongoose.model('Deliveryboy',deliveryboySchema)
+module.exports = mongoose.model('Boy',boySchema)

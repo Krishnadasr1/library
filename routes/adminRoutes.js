@@ -4,13 +4,15 @@ const router = express.Router();
 const { 
     RegisterAdmin,
     LoginAdmin,
-    //CreateWM,
+    CreateWM,
     ViewWM,
+    ViewAllWM,
     UpdateWM,
-   // DeleteWM,
-    AddBook,
-    SearchBook
-    
+    DeleteWM,
+    AddBook ,
+    ListUsersWithNoPatronId,
+    ListUsersWithPatronId,
+    PlaceCheckout
  } = require("../controllers/adminControllers");
 
 router.post("/register",(req, res) => {
@@ -27,35 +29,42 @@ router.post("/login",(req, res) => {
       res.status(500).json(err)
   })
 });
-// router.post("/add_wardmember",(req, res) => {
-//     CreateWM(req.body).then(resp => {
-//         res.status(200).json(resp)
-//     }).catch(err => {
-//         res.status(500).json(err)
-//     })
-//   });
+router.post("/add-member",(req, res) => {
+    CreateWM(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
  
-  router.post("/view_wardmember",(req, res) => {
+  router.post("/view-member",(req, res) => {
     ViewWM(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
   });
-  router.post("/update_wardmember",(req, res) => {
+  router.get("/view-member-all",(req, res) => {
+    ViewAllWM().then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
+  router.post("/update-member",(req, res) => {
     UpdateWM(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
   });
-  // router.post("/delete_wardmember",(req, res) => {
-  //   DeleteWM(req.body).then(resp => {
-  //       res.status(200).json(resp)
-  //   }).catch(err => {
-  //       res.status(500).json(err)
-  //   })
-  // });
+  router.post("/delete-member",(req, res) => {
+    DeleteWM(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
   router.post("/add-book",(req, res) => {
     console.log(req.body)
       AddBook(req.body).then(resp => {
@@ -65,16 +74,27 @@ router.post("/login",(req, res) => {
           res.status(500).json(err)
       })
   });
-  router.post('/search-book-byname',(req,res) => {
-    SearchBook(req.body).then((resp) => {
-      res.status(200).json(resp);
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-    });
-  })
-  
-  
+  router.get("/list-membership-requests",(req, res) => {
+     ListUsersWithNoPatronId().then(resp => {
+          res.status(200).json(resp)
+      }).catch(err => {
+          res.status(500).json(err)
+      })
+  });
+  router.get("/list-all-users",(req, res) => {
+    ListUsersWithPatronId().then(resp => {
+         res.status(200).json(resp)
+     }).catch(err => {
+         res.status(500).json(err)
+     })
+ });
+ router.post("/place-checkout",(req, res) => {
+    PlaceCheckout(req.body).then(resp => {
+         res.status(200).json(resp)
+     }).catch(err => {
+         res.status(500).json(err)
+     })
+ });
 
 
 module.exports = router;

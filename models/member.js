@@ -1,13 +1,8 @@
 const mongoose = require('mongoose')
 
 const memberSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
-    },
-   phoneNumber: {
+    
+   phone_number: {
        type: String,
        required: true,
        unique: true,
@@ -17,13 +12,15 @@ const memberSchema = new mongoose.Schema({
     required: true,
     unique: true,
 },
-wardNumber: {
+ward_number: {
     type: String,
     required: true,
     
 },
-   
-    
+password: {
+    type: String,
+    required: true
+}   
 
 
 }, { timestamps: true })

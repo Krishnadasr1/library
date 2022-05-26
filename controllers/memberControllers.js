@@ -1,10 +1,10 @@
-const WardMember = require("../models/wardmember");
-const Deliveryboy = require("../models/deliveryboy");
+const WardMember = require("../models/member");
+const Deliveryboy = require("../models/boy");
 const bcrypt = require('bcryptjs');
 
 const LoginWardmember = (data) => {
   return new Promise((resolve,reject) =>{
-    WardMember.find({phoneNumber: data.phoneNumber}).exec()
+    WardMember.find({phone_number: data.phone_number}).exec()
     .then(user =>{
       if(user.length < 1){
         reject({
@@ -85,20 +85,17 @@ const DeleteWardMember = (data) => {
 
   const AddDeliveryboy = (data) => {
     return new Promise(async (resolve,reject) => {
-      WardMember.findOne({ _id: data.wardMemberId })
+      WardMember.findOne({ _id: data.member_id })
       .then((user) => {
         console.log(user)
         bcrypt.hash(data.password, 10, (err, hash) => {
-            if (err) {
-              reject(err)
-            } else {
+          if(err){
+            reject(err)
+          }
+       else {
           const deliveryboy = new Deliveryboy({
-            name: data.name,
-             address : data.address,
-             password: hash,
-            wardNumber : data.wardNumber,
-            phoneNumber: data.phoneNumber,
-            wardMemberId: user._id
+           ...data,
+           password:hash
           });
         deliveryboy
           .save()
@@ -112,10 +109,12 @@ const DeleteWardMember = (data) => {
             reject(err);
           });
         }
-    })
+        })
+    
         })
     })
 }
+
 const UpdateDeliveryboy = (data) => {
     console.log(data);
     return new Promise(async (resolve, reject) => {
@@ -131,7 +130,7 @@ const UpdateDeliveryboy = (data) => {
   };
   const DeleteDeliveryboy = (data) => {
     return new Promise(async (resolve, reject) => {
-      const deliveryboy = await Deliveryboy.deleteOne({ _id: data.id })
+      await Deliveryboy.deleteOne({ _id: data.id })
       .then((resp) => {
           resolve(resp)
       })

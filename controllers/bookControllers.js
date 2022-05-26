@@ -1,6 +1,8 @@
 require("dotenv").config();
 const axios = require("axios")
 const qs = require("qs")
+const Book = require("../models/book");
+
 
 
 let token = null
@@ -70,8 +72,33 @@ const GetItem = (data) => {
       })
   })
 }
-
+const SearchBook = (data) => {
+  return new Promise(async (resolve, reject) => {
+    let token= await getToken();
+    await Book.find({ name: data.txt }).then( (resp) => {
+      let id=resp[0].biblioId;
+      const req = {
+        method: 'get',
+        url: `${process.env.kohaBaseUrl}/biblios/${id}`,
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }
+      axios(req).then((resp) =>{
+        resolve(resp.data)
+      }) .catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+    }).catch((error)=>{
+      reject(error)
+    })
+    
+     })
+}
 module.exports = {
   GetBook,
-  GetItem
+  GetItem,
+  SearchBook
 }

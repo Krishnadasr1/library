@@ -10,7 +10,7 @@ const bcrypt = require("bcryptjs");
         .then(user => {
           if (user.length >= 1) {
             reject({
-              message: "user exist... Try another userName",
+              message: "user exist... Try another email",
               user: JSON.stringify(user)
             })
           } else {
@@ -33,35 +33,37 @@ const bcrypt = require("bcryptjs");
         })
     })
   }
-  const LoginUser=(data)=> {
-    return new Promise((resolve,reject) =>{
-      User.findOne({email: data.email}).exec()
-      .then(user =>{
-        if(user.length < 1){
-          reject({
-            message:"No User Exist"
-          })
-        }
-        bcrypt.compare(data.password,user.password, (err,resp) =>{
-          if(err) {
+  const LoginUser = (data) => {
+    return new Promise((resolve, reject) => {
+      User.find({ email: data.email }).exec()
+        .then(user => {
+          if (user.length < 1) {
             reject({
-              message:"Authentication failed... Incorrect password"
+              message: "No User Exist"
             })
           }
-          if(resp){
-            resolve({
-              message:"success",
-              user:user
-             
+          bcrypt.compare(data.password, user[0].password, (err, resp) => {
+            if (err) {
+              reject({
+                message: "Authentication failed... Incorrect password"
+              })
+            }
+            if (resp) {
+              resolve({
+                message: "success",
+                user: user
+  
+              })
+            }
+            reject({
+              message: "Authentication failed"
             })
-          }
-          reject({
-            message:"Authentication failed"
           })
+        }).catch(err => {
+          reject(err)
         })
-      })
     })
-
+  
   }
   const GetUserById=(data)=> {
     return new Promise((resolve, reject) => {

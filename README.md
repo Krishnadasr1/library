@@ -1,4 +1,4 @@
-# Backoffice-ms
+# koha-service
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/muncipality-library-project1/backoffice-ms.git
+git remote add origin https://gitlab.com/priyanka_tst/koha-service.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/muncipality-library-project1/backoffice-ms/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/priyanka_tst/koha-service/-/settings/integrations)
 
 ## Collaborate with your team
 

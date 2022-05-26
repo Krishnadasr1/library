@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
         maxlength: 10,
         match: /^[a-zA-Z]/,
     },
-    userid: {
+    patron_id: {
         type: String,
         //required: true
     },

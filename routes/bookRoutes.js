@@ -5,7 +5,8 @@ const router = express.Router();
 
 const {
     GetBook,
-    GetItem
+    GetItem,
+    SearchBook
 } = require("../controllers/bookControllers");
 
 router.post("/get_book",(req, res) => {
@@ -22,5 +23,12 @@ router.post("/get-item-biblio",(req, res) => {
         res.status(500).json(err)
     })
   });
-
+  router.post('/search-book-byname',(req,res) => {
+    SearchBook(req.body).then((resp) => {
+      res.status(200).json(resp);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+  })
 module.exports = router;
