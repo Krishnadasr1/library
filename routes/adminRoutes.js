@@ -12,7 +12,8 @@ const {
     AddBook ,
     ListUsersWithNoPatronId,
     ListUsersWithPatronId,
-    PlaceCheckout
+    PlaceCheckout,
+    ListBoys
  } = require("../controllers/adminControllers");
 
 router.post("/register",(req, res) => {
@@ -83,6 +84,13 @@ router.post("/add-member",(req, res) => {
   });
   router.get("/list-all-users",(req, res) => {
     ListUsersWithPatronId().then(resp => {
+         res.status(200).json(resp)
+     }).catch(err => {
+         res.status(500).json(err)
+     })
+ });
+ router.get("/list-all-boys",(req, res) => {
+    ListBoys().then(resp => {
          res.status(200).json(resp)
      }).catch(err => {
          res.status(500).json(err)

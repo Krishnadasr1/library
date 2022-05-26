@@ -57,7 +57,7 @@ const LoginUser = (data) => {
  
   const GetCheckoutList = (data) => {
     return new Promise(async (resolve, reject) => {
-        Delivery.find({ ward_number: data.ward_number })
+        Delivery.find({ ward_number: data.ward_number ,checkout_status:"Open"})
         .then((resp) => {
           console.log(resp);
           resolve(resp);
@@ -69,7 +69,7 @@ const LoginUser = (data) => {
   };
   const GetReturnList = (data) => {
     return new Promise(async (resolve, reject) => {
-        Delivery.find({ ward_number: data.ward_number })
+        Delivery.find({ ward_number: data.ward_number,return_status:"Open" })
         .then((resp) => {
           console.log(resp);
           resolve(resp);
@@ -84,7 +84,7 @@ const LoginUser = (data) => {
       await  Delivery.findOneAndUpdate({ _id: data.order_id },{checkout_status:"Closed"})
         .then((resp) => {
          // console.log(resp);
-          resolve(resp);
+          resolve(Delivery.findOne({_id:data.order_id}));
         })
         .catch((err) => {
           reject(err);
@@ -96,7 +96,7 @@ const LoginUser = (data) => {
         Delivery.findOneAndUpdate({ _id: data.order_id },{return_status:"Closed"})
         .then((resp) => {
           console.log(resp);
-          resolve(resp);
+          resolve(Delivery.findOne({_id:data.order_id}));
         })
         .catch((err) => {
           reject(err);

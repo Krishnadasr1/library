@@ -43,7 +43,7 @@ const deliverySchema = new mongoose.Schema({
     return_status: {
         type: String,
     required: true,
-    default:"Open"
+    default:"N"
     },
 
 

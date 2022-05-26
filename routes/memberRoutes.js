@@ -4,9 +4,6 @@ const router = express.Router();
 
 const {
     LoginWardmember,
-    AddWardMember,
-    ListWardMember,
-    DeleteWardMember,
     AddDeliveryboy,
     UpdateDeliveryboy,
     DeleteDeliveryboy,

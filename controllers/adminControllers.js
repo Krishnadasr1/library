@@ -130,6 +130,18 @@ const ViewAllWM = (data) => {
   });
 
 }
+const ListBoys = () => {
+  return new Promise(async (resolve, reject) => {
+    await Boy.find()
+      .then((resp) => {
+        resolve(resp);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+
+}
 const UpdateWM = (data) => {
   return new Promise(async (resolve, reject) => {
     await WM.findOneAndUpdate({ phone_number: data.phone_number }, data).exec()
@@ -234,5 +246,6 @@ module.exports = {
   AddBook,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
-  PlaceCheckout
+  PlaceCheckout,
+  ListBoys
 }
