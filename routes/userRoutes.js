@@ -6,6 +6,9 @@ const { RegisterUser,
         GetUserById,
         GetUserByEmail,
         GetAll,
+        DeleteUser,
+        PlaceReturn,
+        PastOrders,
         UpdateUser } = require("../controllers/userControllers");
 
 router.post("/register",(req, res) => {
@@ -50,6 +53,26 @@ router.post("/get_by_patron_id",(req, res) => {
         res.status(500).json(err)
     })
   });
-
+  router.post("/delete",(req, res) => {
+    DeleteUser(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
+  router.post("/place-return",(req, res) => {
+    PlaceReturn(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
+  router.post("/past-orders",(req, res) => {
+    PastOrders(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
 
 module.exports = router;

@@ -72,8 +72,8 @@ const CancelHold = (data) => {
     let token = await getToken()
     //console.log(data)
     const req = {
-      method: 'post',
-      url: `${process.env.kohaBaseUrl}/holds`,
+      method: 'delete',
+      url: `${process.env.kohaBaseUrl}/holds${data.hold_id}`,
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${token}`
@@ -86,7 +86,7 @@ const CancelHold = (data) => {
       }).catch((err) => {
         if (err.response.status === 403) {
           reject({
-            Error:'Item already on hold',
+            Error:'hold not exist',
             err,
           })
         }

@@ -35,52 +35,8 @@ const LoginWardmember = (data) => {
     })
   })
   };
-  const AddWardMember = (data) => {
-    return new Promise(async (resolve,reject) => {
-      bcrypt.hash(data.password, 10, (err, hash) => {
-        if (err) {
-          reject(err)
-        } else {
-          const user = WardMember({
-            ...data,
-            password: hash
-          })
-          user.save().then(resp => {
-            resolve(resp)
-          }).catch(err => {
-            reject(err)
-          })
-        }
-      })
-     
-     
-})
-}
+  
 
-const ListWardMember = () =>{
-  return new Promise((resolve,reject)=>{
-    WardMember.find()
-    .then((resp) => {
-      resolve(resp);
-    })
-    .catch((err) =>{
-      reject(err);
-    });
-  });
-};
-
-
-const DeleteWardMember = (data) => {
-  return new Promise(async (resolve, reject) => {
-    const wardmember = await WardMember.deleteOne({ _id: data.id })
-      .then((resp) => {
-        resolve(resp);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
 
 
   const AddDeliveryboy = (data) => {
@@ -153,9 +109,6 @@ const UpdateDeliveryboy = (data) => {
   };
 module.exports = {
     LoginWardmember,
-   AddWardMember,
-   ListWardMember,
-   DeleteWardMember,
     AddDeliveryboy,
     UpdateDeliveryboy,
     DeleteDeliveryboy,
