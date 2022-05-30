@@ -75,33 +75,31 @@ const GetItem = (data) => {
 const SearchBook = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await getToken();
-    let books =[];
-    let sortedbooks=[];
-    //books = await Book.find({ name: data.txt  }).exec();
-    books = await Book.find({ $name: { $search: data.txt } }).exec();
-    console.log(books)
-    for(let i=0; i<books.length; i++){
-      console.log(books[i].name)
-      //let id = resp[0].biblioId;
+  
+   // books = 
+   await Book.find({ $name: { $search: data.txt } }).exec().then((resp) =>{
+      //console.log(books[i].name)
+      let id = resp[0].biblioId;
       const req = {
         method: 'get',
-        url: `${process.env.kohaBaseUrl}/biblios/${books[i].biblioId}`,
+        url: `${process.env.kohaBaseUrl}/biblios/${id}`,
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${token}`
         }
       }
       axios(req).then((resp) => {
-        sortedbooks[i] = resp.data
-        //console.log(sortedbooks)
-       resolve(sortedbooks)
+       resolve(resp.data)
       }).catch((err) => {
         console.log(err);
         reject(err);
       })
-    }
-    //resolve(sortedbooks)
-     
+    
+    }).catch((err) => {
+      console.log(err);
+      reject(err);
+    })
+       
   })
 }
 module.exports = {
