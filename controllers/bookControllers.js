@@ -72,14 +72,15 @@ const GetItem = (data) => {
       })
   })
 }
-const SearchBook = (data) => {
-  return new Promise(async (resolve, reject) => {
-    let token = await getToken();
+
   
-   // books = 
-   await Book.find({ $name: { $search: data.txt } }).exec().then((resp) =>{
-      //console.log(books[i].name)
-      let id = resp[0].biblioId;
+   // $name: { $search: data.txt }
+
+   const SearchBook = (data) => {
+  return new Promise(async (resolve, reject) => {
+    let token= await getToken();
+    await Book.find({ name:data.txt }).then( (resp) => {
+      let id=resp[0].biblioId;
       const req = {
         method: 'get',
         url: `${process.env.kohaBaseUrl}/biblios/${id}`,
@@ -88,20 +89,19 @@ const SearchBook = (data) => {
           Authorization: `Bearer ${token}`
         }
       }
-      axios(req).then((resp) => {
-       resolve(resp.data)
-      }).catch((err) => {
+      axios(req).then((resp) =>{
+        resolve(resp.data)
+      }) .catch((err) => {
         console.log(err);
         reject(err);
       })
-    
-    }).catch((err) => {
-      console.log(err);
-      reject(err);
+    }).catch((error)=>{
+      reject(error)
     })
-       
-  })
+    
+     })
 }
+
 module.exports = {
   GetBook,
   GetItem,
