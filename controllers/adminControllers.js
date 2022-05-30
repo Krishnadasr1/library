@@ -234,6 +234,30 @@ const PlaceCheckout = (data) => {
   });
 
 }
+const ListAllCheckIn = () => {
+  return new Promise(async (resolve, reject) => {
+      Delivery.find({return_status:"Open"})
+      .then((resp) => {
+        console.log(resp);
+        resolve(resp);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+const ConformReturn = (data) => {
+  return new Promise(async (resolve, reject) => {
+      Delivery.findOneAndUpdate({ _id: data.order_id },{return_status:"Conformed"})
+      .then((resp) => {
+        console.log(resp);
+        resolve(Delivery.findOne({_id:data.order_id}));
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
 
 module.exports = {
   RegisterAdmin,
@@ -247,5 +271,7 @@ module.exports = {
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
   PlaceCheckout,
-  ListBoys
+  ListBoys,
+  ListAllCheckIn,
+  ConformReturn
 }

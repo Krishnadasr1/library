@@ -173,8 +173,8 @@ const getToken = () => {
           reject(err)
         })
         await User.findOneAndDelete({ _id: data.database_id }).exec()
-          .then(() => {
-            resolve();
+          .then((resp) => {
+            resolve(resp);
           })
           .catch((err) => {
             console.log(err)

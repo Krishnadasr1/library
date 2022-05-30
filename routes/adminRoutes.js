@@ -13,7 +13,9 @@ const {
     ListUsersWithNoPatronId,
     ListUsersWithPatronId,
     PlaceCheckout,
-    ListBoys
+    ListBoys,
+    ListAllCheckIn,
+    ConformReturn
  } = require("../controllers/adminControllers");
 
 router.post("/register",(req, res) => {
@@ -98,6 +100,20 @@ router.post("/add-member",(req, res) => {
  });
  router.post("/place-checkout",(req, res) => {
     PlaceCheckout(req.body).then(resp => {
+         res.status(200).json(resp)
+     }).catch(err => {
+         res.status(500).json(err)
+     })
+ });
+ router.get("/list-all-checkin",(req, res) => {
+    ListAllCheckIn().then(resp => {
+         res.status(200).json(resp)
+     }).catch(err => {
+         res.status(500).json(err)
+     })
+ });
+ router.post("/conform-return",(req, res) => {
+    ConformReturn(req.body).then(resp => {
          res.status(200).json(resp)
      }).catch(err => {
          res.status(500).json(err)
