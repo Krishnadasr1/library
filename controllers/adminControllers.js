@@ -236,7 +236,7 @@ const PlaceCheckout = (data) => {
 }
 const ListAllCheckIn = () => {
   return new Promise(async (resolve, reject) => {
-      Delivery.find({return_status:"Open"})
+      Delivery.find({return_status:"Closed"})
       .then((resp) => {
         console.log(resp);
         resolve(resp);
