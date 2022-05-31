@@ -88,6 +88,7 @@ router.post("/add-member",(req, res) => {
     ListUsersWithPatronId().then(resp => {
          res.status(200).json(resp)
      }).catch(err => {
+         console.log(err)
          res.status(500).json(err)
      })
  });

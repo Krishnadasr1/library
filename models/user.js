@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
     },
     patron_id: {
         type: String,
+        default:null
         //required: true
     },
     password: {
