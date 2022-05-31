@@ -79,7 +79,7 @@ const GetItem = (data) => {
    const SearchBook = (data) => {
   return new Promise(async (resolve, reject) => {
     let token= await getToken();
-    await Book.find({ name:data.txt }).then( (resp) => {
+    await Book.find({name:{'$regex' : data.txt}}).then( (resp) => {
       let id=resp[0].biblioId;
       const req = {
         method: 'get',
