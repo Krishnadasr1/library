@@ -199,14 +199,16 @@ const ListUsersWithNoPatronId = (data) => {
   });
 
 }
+
 const ListUsersWithPatronId = (data) => {
   return new Promise((resolve, reject) => {
-    User.find({},{ patron_id: 1 })
+    User.find({patron_id: {$not: {$eq: null}}})
       .then((resp) => {
         console.log(resp)
         resolve(resp);
       })
       .catch((err) => {
+        console.log(err)
         reject(err);
       });
   });
