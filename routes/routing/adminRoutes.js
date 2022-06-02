@@ -16,7 +16,7 @@ const {
     ListBoys,
     ListAllCheckIn,
     ConformReturn
- } = require("../controllers/adminControllers");
+ } = require("../../controllers/adminControllers");
 
 router.post("/register",(req, res) => {
   RegisterAdmin(req.body).then(resp => {

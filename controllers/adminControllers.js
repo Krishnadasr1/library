@@ -9,9 +9,7 @@ const User = require("../models/user");
 
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
-const axios = require("axios")
 const qs = require("qs");
-const { del } = require("express/lib/application");
 
 
 

@@ -7,7 +7,7 @@ const {
     GetBook,
     GetItem,
     SearchBook
-} = require("../controllers/bookControllers");
+} = require("../../controllers/bookControllers");
 
 router.post("/get_book",(req, res) => {
   GetBook(req.body).then(resp => {

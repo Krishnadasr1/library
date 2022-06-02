@@ -9,7 +9,7 @@ const { RegisterUser,
         DeleteUser,
         PlaceReturn,
         PastOrders,
-        UpdateUser } = require("../controllers/userControllers");
+        UpdateUser } = require("../../controllers/userControllers");
 
 router.post("/register",(req, res) => {
   RegisterUser(req.body).then(resp => {

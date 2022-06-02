@@ -8,7 +8,7 @@ const {
     UpdateDeliveryboy,
     DeleteDeliveryboy,
     ListDeliveryboy
-} = require("../controllers/memberControllers");
+} = require("../../controllers/memberControllers");
 
 
 router.post('/login',(req,res) => {

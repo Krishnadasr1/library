@@ -4,7 +4,7 @@ const router = express.Router();
 const {
       ListCheckouts,
       GetCheckout,
-     } = require("../controllers/checkoutControllers");
+     } = require("../../controllers/checkoutControllers");
 
 
 router.get("/list_checkouts",(req, res) => {

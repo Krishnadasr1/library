@@ -7,7 +7,7 @@ const {
       CreatePatron,
       GetPatron
     
-     } = require("../controllers/patronControllers");
+     } = require("../../controllers/patronControllers");
 
 
 router.post("/create_patron",(req, res) => {

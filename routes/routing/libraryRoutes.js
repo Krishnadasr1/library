@@ -7,7 +7,7 @@ const {
       GetLibrary,
       UpdateLibrary
       
-     } = require("../controllers/libraryControllers");
+     } = require("../../controllers/libraryControllers");
 
 
 router.post("/get_library",(req, res) => {
