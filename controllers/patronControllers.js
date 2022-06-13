@@ -40,7 +40,7 @@ const GetPatron = (data) => {
       let token = await Token.getToken();
       //console.log(data)
       const req = {
-        method: 'post',
+        method: 'get',
         url: `${process.env.kohaBaseUrl}/patrons/${data.id}`,
         headers: {
           Accept: 'application/json',
