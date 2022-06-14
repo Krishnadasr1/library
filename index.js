@@ -7,7 +7,7 @@ app.use(bodyParser())
 app.use(cors())
 
 
-app.use('/lib',require('./routes/routing'))
+app.use('/api/v1/amc',require('./routes/routing'))
 
 
 
