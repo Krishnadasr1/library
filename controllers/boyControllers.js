@@ -103,6 +103,18 @@ const LoginUser = (data) => {
         });
     });
   };
+  const PastOrders = (data) => {
+    return new Promise(async (resolve, reject) => {
+      await  Delivery.find({ ward_number: data.ward_number })
+        .then((resp) => {
+         // console.log(resp);
+          resolve(resp);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
 
 
 module.exports = {
@@ -111,6 +123,7 @@ module.exports = {
   GetCheckoutList,
    OrderPlaced,
    GetReturnList,
-   ReturnDone
+   ReturnDone,
+   PastOrders
      
 }

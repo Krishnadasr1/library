@@ -25,6 +25,7 @@ const deliverySchema = new mongoose.Schema({
     },
     ward_number: {
         type: String,
+        unique:true,
     required: true
     },
     barcode: {

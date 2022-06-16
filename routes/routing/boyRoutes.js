@@ -7,7 +7,8 @@ const {
         GetCheckoutList,
         OrderPlaced,
         GetReturnList,
-        ReturnDone
+        ReturnDone,
+        PastOrders
 
          } = require("../../controllers/boyControllers");
 
@@ -49,6 +50,13 @@ router.post("/get_checkout_list",(req, res) => {
   });
   router.post("/return_done",(req, res) => {
     ReturnDone(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
+  router.post("/past_orders",(req, res) => {
+    PastOrders(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
