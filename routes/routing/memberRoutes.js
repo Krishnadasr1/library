@@ -4,6 +4,7 @@ const router = express.Router();
 
 const {
     LoginWardmember,
+    ViewWardmember,
     AddDeliveryboy,
     UpdateDeliveryboy,
     DeleteDeliveryboy,
@@ -18,7 +19,13 @@ router.post('/login',(req,res) => {
       res.status(400).json(err)
   })
 })
-
+router.post('/view-member',(req,res) => {
+  ViewWardmember(req.body).then(resp => {
+    res.status(200).json(resp)
+}).catch(err => {
+    res.status(400).json(err)
+})
+})
 router.post("/add-delivery-person", (req, res) => {
     AddDeliveryboy(req.body).then(resp => {
        res.status(200).json(resp)

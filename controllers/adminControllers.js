@@ -7,11 +7,14 @@ const Boy = require("../models/boy");
 const Delivery = require("../models/delivery");
 const User = require("../models/user");
 
+
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
-const qs = require("qs");
+const fs = require('fs')
+const util = require('util')
+const unlinkFile = util.promisify(fs.unlink)
 
-
+const { uploadFile } = require('../s3')
 
 
 const RegisterAdmin = (data) => {
@@ -184,6 +187,25 @@ const AddBook = (data) => {
       })
   })
 }
+const AddImage = (data, data1) => {
+  return new Promise(async (resolve, reject) => {
+    const file = data
+    const id = data1.biblioId
+    console.log(id)
+
+    const result = await uploadFile(file)
+    await unlinkFile(file.path)
+    //console.log(result)
+    const description = data.description
+    //resolve({imagePath: `/images/${result.Key}`})
+    Book.findOneAndUpdate({ biblioId: id }, { image: result.Key })
+    .then((resp) => {
+      resolve(resp)
+    }).catch(err =>{
+      reject(err)
+    })
+  })
+}
 
 const ListUsersWithNoPatronId = (data) => {
   return new Promise((resolve, reject) => {
@@ -200,7 +222,7 @@ const ListUsersWithNoPatronId = (data) => {
 
 const ListUsersWithPatronId = (data) => {
   return new Promise((resolve, reject) => {
-    User.find({patron_id: {$not: {$eq: null}}})
+    User.find({ patron_id: { $not: { $eq: null } } })
       .then((resp) => {
         console.log(resp)
         resolve(resp);
@@ -224,9 +246,9 @@ const PlaceCheckout = (data) => {
           const delivery = Delivery({
             ...data,
           })
-          delivery.save().then(resp =>{
+          delivery.save().then(resp => {
             resolve(resp);
-          }).catch(err =>{
+          }).catch(err => {
             reject(err)
           })
         }
@@ -236,7 +258,7 @@ const PlaceCheckout = (data) => {
 }
 const ListAllCheckIn = () => {
   return new Promise(async (resolve, reject) => {
-      Delivery.find({return_status:"Closed"})
+    Delivery.find({ return_status: "Closed" })
       .then((resp) => {
         console.log(resp);
         resolve(resp);
@@ -248,16 +270,17 @@ const ListAllCheckIn = () => {
 };
 const ConformReturn = (data) => {
   return new Promise(async (resolve, reject) => {
-      Delivery.findOneAndUpdate({ _id: data.order_id },{return_status:"Conformed"})
+    Delivery.findOneAndUpdate({ _id: data.order_id }, { return_status: "Conformed" })
       .then((resp) => {
         console.log(resp);
-        resolve(Delivery.findOne({_id:data.order_id}));
+        resolve(Delivery.findOne({ _id: data.order_id }));
       })
       .catch((err) => {
         reject(err);
       });
   });
 };
+
 
 module.exports = {
   RegisterAdmin,
@@ -268,6 +291,7 @@ module.exports = {
   UpdateWM,
   DeleteWM,
   AddBook,
+  AddImage,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
   PlaceCheckout,

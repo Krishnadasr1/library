@@ -25,7 +25,7 @@ const getToken = () => {
       const resp = await axios(req)
       token = resp.data.access_token
       tokenExpire = new Date(Date.now() + resp.data.expires_in * 1000)
-      console.log('getToken koha', token, tokenExpire)
+     // console.log('getToken koha', token, tokenExpire)
     }
     resolve(token)
   })

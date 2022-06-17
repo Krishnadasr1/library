@@ -1,7 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const Book = require("../../models/book");
 
-const { 
+
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
+const { getFileStream } = require('../../s3')
+
+
+const {
     RegisterAdmin,
     LoginAdmin,
     CreateWM,
@@ -9,117 +16,136 @@ const {
     ViewAllWM,
     UpdateWM,
     DeleteWM,
-    AddBook ,
+    AddBook,
+    AddImage,
     ListUsersWithNoPatronId,
     ListUsersWithPatronId,
     PlaceCheckout,
     ListBoys,
     ListAllCheckIn,
     ConformReturn
- } = require("../../controllers/adminControllers");
+} = require("../../controllers/adminControllers");
 
-router.post("/register",(req, res) => {
-  RegisterAdmin(req.body).then(resp => {
-      res.status(200).json(resp)
-  }).catch(err => {
-      res.status(500).json(err)
-  })
+router.post("/register", (req, res) => {
+    RegisterAdmin(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
 });
-router.post("/login",(req, res) => {
-  LoginAdmin(req.body).then(resp => {
-      res.status(200).json(resp)
-  }).catch(err => {
-      res.status(500).json(err)
-  })
+router.post("/login", (req, res) => {
+    LoginAdmin(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
 });
-router.post("/add-member",(req, res) => {
+router.post("/add-member", (req, res) => {
     CreateWM(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
-  });
- 
-  router.post("/view-member",(req, res) => {
+});
+
+router.post("/view-member", (req, res) => {
     ViewWM(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
-  });
-  router.get("/view-member-all",(req, res) => {
+});
+router.get("/view-member-all", (req, res) => {
     ViewAllWM().then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
-  });
-  router.post("/update-member",(req, res) => {
+});
+router.post("/update-member", (req, res) => {
     UpdateWM(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
-  });
-  router.post("/delete-member",(req, res) => {
+});
+router.post("/delete-member", (req, res) => {
     DeleteWM(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
-  });
-  router.post("/add-book",(req, res) => {
+});
+router.post("/add-book", (req, res) => {
     console.log(req.body)
-      AddBook(req.body).then(resp => {
-      
-          res.status(200).json(resp)
-      }).catch(err => {
-          res.status(500).json(err)
-      })
-  });
-  router.get("/list-membership-requests",(req, res) => {
-     ListUsersWithNoPatronId().then(resp => {
-          res.status(200).json(resp)
-      }).catch(err => {
-          res.status(500).json(err)
-      })
-  });
-  router.get("/list-all-users",(req, res) => {
+    AddBook(req.body).then(resp => {
+
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+
+
+router.get("/get-book/image/:biblioId", async (req, res) => {
+    let book = await Book.find({ biblioId:  req.params.biblioId })
+    const readStream = getFileStream(book.image)
+    readStream.pipe(res)
+})
+
+router.post('/add-book/image/:biblioId', upload.single('image'), async (req, res) => {
+    AddImage(req.file, req.params).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+})
+
+
+router.get("/list-membership-requests", (req, res) => {
+    ListUsersWithNoPatronId().then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.get("/list-all-users", (req, res) => {
     ListUsersWithPatronId().then(resp => {
-         res.status(200).json(resp)
-     }).catch(err => {
-         console.log(err)
-         res.status(500).json(err)
-     })
- });
- router.get("/list-all-boys",(req, res) => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        console.log(err)
+        res.status(500).json(err)
+    })
+});
+
+router.get("/list-all-boys", (req, res) => {
     ListBoys().then(resp => {
-         res.status(200).json(resp)
-     }).catch(err => {
-         res.status(500).json(err)
-     })
- });
- router.post("/place-checkout",(req, res) => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/place-checkout", (req, res) => {
     PlaceCheckout(req.body).then(resp => {
-         res.status(200).json(resp)
-     }).catch(err => {
-         res.status(500).json(err)
-     })
- });
- router.get("/list-all-checkin",(req, res) => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.get("/list-all-checkin", (req, res) => {
     ListAllCheckIn().then(resp => {
-         res.status(200).json(resp)
-     }).catch(err => {
-         res.status(500).json(err)
-     })
- });
- router.post("/conform-return",(req, res) => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/conform-return", (req, res) => {
     ConformReturn(req.body).then(resp => {
-         res.status(200).json(resp)
-     }).catch(err => {
-         res.status(500).json(err)
-     })
- });
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
 
 
 module.exports = router;

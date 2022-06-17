@@ -36,7 +36,17 @@ const LoginWardmember = (data) => {
   })
   };
   
-
+  const ViewWardmember = (data) => {
+    return new Promise(async (resolve, reject) => {
+      await WardMember.find({ _id: data.id })
+      .then((resp) => {
+          resolve(resp)
+      })
+      .catch((err) =>{
+          reject(err)
+      })
+    });
+  };
 
 
   const AddDeliveryboy = (data) => {
@@ -109,6 +119,7 @@ const UpdateDeliveryboy = (data) => {
   };
 module.exports = {
     LoginWardmember,
+    ViewWardmember,
     AddDeliveryboy,
     UpdateDeliveryboy,
     DeleteDeliveryboy,
