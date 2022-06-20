@@ -69,27 +69,13 @@ const GetItemById = (data) => {
 const SearchBook = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await Token.getToken();
-    await Book.find({ name: { '$regex': data.txt } }).then((resp) => {
-      let id = resp[0].biblioId;
-      const req = {
-        method: 'get',
-        url: `${process.env.kohaBaseUrl}/biblios/${id}`,
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      }
-      axios(req).then((resp) => {
-        resolve(resp.data)
+    await Book.find({ name: { '$regex': data.txt } }).then((resp) => { 
+        resolve(resp)
       }).catch((err) => {
         console.log(err);
         reject(err);
       })
-    }).catch((error) => {
-      reject(error)
     })
-
-  })
 }
 const SearchBook1 = (data) => {
   return new Promise(async (resolve, reject) => {
