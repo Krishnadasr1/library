@@ -190,16 +190,16 @@ const AddBook = (data) => {
 const AddImage = (data, data1) => {
   return new Promise(async (resolve, reject) => {
     const file = data
-    const id = data1.biblioId
-    console.log(id)
-
-    const result = await uploadFile(file)
+    const id = data1.id
+      const result = await uploadFile(file)
     await unlinkFile(file.path)
-    //console.log(result)
+    console.log(result.Key)
     const description = data.description
-    //resolve({imagePath: `/images/${result.Key}`})
-    Book.findOneAndUpdate({ biblioId: id }, { image: result.Key })
+
+   await Book.findOneAndUpdate({ biblioId: id }, { image: result.Key })
+   
     .then((resp) => {
+      console.log(resp)
       resolve(resp)
     }).catch(err =>{
       reject(err)
