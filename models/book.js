@@ -12,6 +12,9 @@ const bookSchema = new mongoose.Schema({
     },
 image:{
     type:String
+},
+items:{
+    type:Array
 }
     
 

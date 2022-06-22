@@ -17,6 +17,7 @@ const {
     UpdateWM,
     DeleteWM,
     AddBook,
+    UpdateBook,
     AddImage,
     ListUsersWithNoPatronId,
     ListUsersWithPatronId,
@@ -85,7 +86,15 @@ router.post("/add-book", (req, res) => {
         res.status(500).json(err)
     })
 });
+router.post("/update-book", (req, res) => {
+    console.log(req.body)
+    UpdateBook(req.body).then(resp => {
 
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
 
 router.get("/get-book/image/:biblioId", async (req, res) => {
     let book = await Book.findOne({ biblioId: req.params.biblioId }).exec();

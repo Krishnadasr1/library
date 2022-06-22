@@ -187,6 +187,17 @@ const AddBook = (data) => {
       })
   })
 }
+const UpdateBook = (data) => {
+  return new Promise(async (resolve, reject) => {
+ Book.findOneAndUpdate({biblioId:data.biblioId},data)
+      .then(async (resp) => {
+        resolve(resp);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+  })
+}
 const AddImage = (data, data1) => {
   return new Promise(async (resolve, reject) => {
     const file = data
@@ -291,6 +302,7 @@ module.exports = {
   UpdateWM,
   DeleteWM,
   AddBook,
+  UpdateBook,
   AddImage,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
