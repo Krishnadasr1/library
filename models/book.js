@@ -15,9 +15,11 @@ image:{
 },
 items:{
     type:Array
+},
+category:{
+    type:String,
+    enum:["Novel","Story","Poem","Journals","AutoBiography","General"]
 }
-    
-
 })
 
 module.exports= mongoose.model('Book', bookSchema)
