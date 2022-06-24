@@ -209,6 +209,17 @@ const GetBook = (data) => {
       })
   })
 }
+const GetBookByCategory = (data) => {
+  return new Promise(async (resolve, reject) => {
+ Book.find({category:data.category})
+      .then(async (resp) => {
+        resolve(resp);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+  })
+}
 const AddImage = (data, data1) => {
   return new Promise(async (resolve, reject) => {
     const file = data
@@ -315,6 +326,7 @@ module.exports = {
   AddBook,
   UpdateBook,
   GetBook,
+  GetBookByCategory,
   AddImage,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
