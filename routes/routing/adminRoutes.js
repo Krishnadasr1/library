@@ -122,8 +122,8 @@ router.get("/get-book/image/:biblioId", async (req, res) => {
 
 })
 
-router.post('/add-book/image/:id', upload.single('image'), async (req, res) => {
- 
+router.post('/add-book/image/:id', upload.single('image'),  (req, res) => {
+ console.log(req.file)
     AddImage(req.file, req.params).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {

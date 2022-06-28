@@ -213,6 +213,7 @@ const AddImage = (data, data1) => {
   return new Promise(async (resolve, reject) => {
     const file = data
     const id = data1.id
+    console.log(file)
       const result = await uploadFile(file)
     await unlinkFile(file.path)
     console.log(result.Key)
