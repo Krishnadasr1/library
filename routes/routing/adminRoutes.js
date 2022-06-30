@@ -109,6 +109,11 @@ router.post("/get-book", (req, res) => {
 router.post("/get-book-by-category", (req, res) => {
     console.log(req.body)
     GetBookByCategory(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+})
 
 router.get("/get-book/image/:id", async (req, res) => {
     let book = await Book.findOne({ biblioId:  req.params.id }).exec();
