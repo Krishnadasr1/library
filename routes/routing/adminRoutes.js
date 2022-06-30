@@ -110,31 +110,24 @@ router.post("/get-book-by-category", (req, res) => {
     console.log(req.body)
     GetBookByCategory(req.body).then(resp => {
 
-        res.status(200).json(resp)
-    }).catch(err => {
-        res.status(500).json(err)
-    })
-});
-router.get("/get-book/image/:biblioId", async (req, res) => {
-    let book = await Book.findOne({ biblioId: req.params.biblioId }).exec();
-    console.log(book)
-    if (book != null) {
-        if(book.image!= null){
-            let key = book.image
-            console.log(key)
-            const readStream = getFileStream(key)
-            readStream.pipe(res)
-        }else
-        res.status(404).send('Image Not Found');
-        
-    } else {
-        res.status(404).send('Image Not Found');
+router.get("/get-book/image/:id", async (req, res) => {
+    let book = await Book.findOne({ biblioId:  req.params.id }).exec();
+    if(book!=null){
+        console.log(book.image)
+    if(book.image != null ){
+        const readStream = getFileStream(book.image)
+        readStream.pipe(res) 
+    }else{
+        res.status(404).send('Image Not Found'); 
+    }
+    }else{
+        res.status(404).send('Book Not Found');
     }
 
 })
 
-router.post('/add-book/image/:id', upload.single('image'), async (req, res) => {
- 
+router.post('/add-book/image/:id', upload.single('image'),  (req, res) => {
+ console.log(req.file)
     AddImage(req.file, req.params).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
