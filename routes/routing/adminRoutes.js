@@ -106,16 +106,16 @@ router.post("/get-book", (req, res) => {
     })
 });
 
-router.get("/get-book/image/:biblioId", async (req, res) => {
-    let book = await Book.find({ biblioId:  req.params.biblioId }).exec();
-    console.log(book)
+router.get("/get-book/image/:id", async (req, res) => {
+    let book = await Book.findOne({ biblioId:  req.params.id }).exec();
     if(book!=null){
+        console.log(book.image)
     if(book.image != null ){
-        console.log(key)
         const readStream = getFileStream(book.image)
         readStream.pipe(res) 
-    }else
-    res.status(404).send('Image Not Found'); 
+    }else{
+        res.status(404).send('Image Not Found'); 
+    }
     }else{
         res.status(404).send('Book Not Found');
     }
