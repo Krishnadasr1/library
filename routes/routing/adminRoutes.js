@@ -19,6 +19,7 @@ const {
     AddBook,
     UpdateBook,
     GetBook,
+    GetBookByCategory,
     AddImage,
     ListUsersWithNoPatronId,
     ListUsersWithPatronId,
@@ -105,6 +106,9 @@ router.post("/get-book", (req, res) => {
         res.status(500).json(err)
     })
 });
+router.post("/get-book-by-category", (req, res) => {
+    console.log(req.body)
+    GetBookByCategory(req.body).then(resp => {
 
 router.get("/get-book/image/:id", async (req, res) => {
     let book = await Book.findOne({ biblioId:  req.params.id }).exec();
