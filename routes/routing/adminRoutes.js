@@ -108,8 +108,8 @@ router.post("/get-book", (req, res) => {
 
 router.get("/get-book/image/:biblioId", async (req, res) => {
     let book = await Book.find({ biblioId:  req.params.biblioId }).exec();
+    console.log(book)
     if(book!=null){
-        console.log(book)
     if(book.image != null ){
         console.log(key)
         const readStream = getFileStream(book.image)
