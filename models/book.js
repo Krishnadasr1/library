@@ -20,6 +20,14 @@ items:{
 category:{
     type:String,
     enum:["Novel","Story","Poem","Journals","AutoBiography","General"]
+},
+trends:{
+    type:String,
+    default:"0"
+},
+release:{
+    type:String,
+    default:"0"
 }
 })
 

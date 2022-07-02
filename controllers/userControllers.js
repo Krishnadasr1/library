@@ -1,6 +1,7 @@
 
 require("dotenv").config();
 const User = require("../models/user");
+const Book = require("../models/book");
 const Delivery = require("../models/delivery");
 
 const bcrypt = require("bcryptjs");
@@ -209,7 +210,30 @@ const getToken = () => {
       });
 
   }
+  const GetTrends=()=> {
+    return new Promise((resolve, reject) => {
+        Book.find({ trends:"1"})
+          .then((resp) => {
+            resolve(resp);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
 
+  }
+  const GetRelease=()=> {
+    return new Promise((resolve, reject) => {
+        Book.find({ release:"1"})
+          .then((resp) => {
+            resolve(resp);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+
+  }
   module.exports={
       RegisterUser,
       LoginUser,
@@ -219,5 +243,7 @@ const getToken = () => {
       DeleteUser,
       UpdateUser,
       PlaceReturn,
-        PastOrders
+        PastOrders,
+        GetTrends,
+        GetRelease
   }

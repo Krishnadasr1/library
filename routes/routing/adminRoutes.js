@@ -26,7 +26,11 @@ const {
     PlaceCheckout,
     ListBoys,
     ListAllCheckIn,
-    ConformReturn
+    ConformReturn,
+    AddBookTrends,
+    RemoveBookTrends,
+    AddBookRelease,
+    RemoveBookRelease
 } = require("../../controllers/adminControllers");
 
 router.post("/register", (req, res) => {
@@ -114,6 +118,41 @@ router.post("/get-book-by-category", (req, res) => {
         res.status(500).json(err)
     })
 })
+router.post("/add-book-top-trends", (req, res) => {
+    console.log(req.body)
+    AddBookTrends(req.body).then(resp => {
+
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/remove-book-top-trends", (req, res) => {
+    console.log(req.body)
+    RemoveBookTrends(req.body).then(resp => {
+
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/add-book-new-release", (req, res) => {
+    console.log(req.body)
+    AddBookRelease(req.body).then(resp => {
+
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/remove-book-new-release", (req, res) => {
+    console.log(req.body)
+    RemoveBookRelease(req.body).then(resp => {
+ res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
 
 router.get("/get-book/image/:id", async (req, res) => {
     let book = await Book.findOne({ biblioId:  req.params.id }).exec();
