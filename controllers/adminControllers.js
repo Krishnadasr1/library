@@ -305,8 +305,10 @@ const ListAllCheckIn = () => {
 const ConformReturn = (data) => {
   return new Promise(async (resolve, reject) => {
     Delivery.findOneAndUpdate({ _id: data.order_id }, { return_status: "Conformed" })
-      .then((resp) => {
-        console.log(resp);
+      .then(async() => {
+       let book= await Book.findOne({biblioId:data.biblioId}).exec()
+      book.items.push(data.itemId);
+       book.save();
         resolve(Delivery.findOne({ _id: data.order_id }));
       })
       .catch((err) => {

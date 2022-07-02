@@ -36,6 +36,10 @@ const deliverySchema = new mongoose.Schema({
         type: String,
     required: true
     },
+    item_id:{
+        type:String,
+        required:true
+    },
     checkout_status: {
         type: String,
     required: true,

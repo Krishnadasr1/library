@@ -20,7 +20,7 @@ router.post("/place_hold",(req, res) => {
 });
 router.post("/cancel_hold",(req, res) => {
   CancelHold(req.body).then(resp => {
-      res.status(200).json(resp)
+      res.status(204).json(resp)
    }).catch(err => {
     res.status(500).json(err)
 })
