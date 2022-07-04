@@ -9,7 +9,10 @@ const { RegisterUser,
         DeleteUser,
         PlaceReturn,
         PastOrders,
-        UpdateUser } = require("../../controllers/userControllers");
+        UpdateUser,
+        GetTrends,
+        GetRelease
+     } = require("../../controllers/userControllers");
 
 router.post("/register",(req, res) => {
   RegisterUser(req.body).then(resp => {
@@ -74,5 +77,18 @@ router.post("/get_by_patron_id",(req, res) => {
         res.status(500).json(err)
     })
   });
-
+  router.post("/get-trends",(req, res) => {
+    GetTrends().then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
+  router.post("/get-release",(req, res) => {
+    GetRelease().then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+  });
 module.exports = router;

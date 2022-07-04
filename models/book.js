@@ -8,7 +8,8 @@ const bookSchema = new mongoose.Schema({
     },
     biblioId: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
 image:{
     type:String
@@ -19,6 +20,14 @@ items:{
 category:{
     type:String,
     enum:["Novel","Story","Poem","Journals","AutoBiography","General"]
+},
+trends:{
+    type:String,
+    default:"0"
+},
+release:{
+    type:String,
+    default:"0"
 }
 })
 

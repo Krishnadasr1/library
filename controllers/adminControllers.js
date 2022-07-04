@@ -305,8 +305,10 @@ const ListAllCheckIn = () => {
 const ConformReturn = (data) => {
   return new Promise(async (resolve, reject) => {
     Delivery.findOneAndUpdate({ _id: data.order_id }, { return_status: "Conformed" })
-      .then((resp) => {
-        console.log(resp);
+      .then(async() => {
+       let book= await Book.findOne({biblioId:data.biblioId}).exec()
+      book.items.push(data.itemId);
+       book.save();
         resolve(Delivery.findOne({ _id: data.order_id }));
       })
       .catch((err) => {
@@ -314,6 +316,54 @@ const ConformReturn = (data) => {
       });
   });
 };
+const AddBookTrends = (data) => {
+  return new Promise(async (resolve, reject) => {
+    Book.findOneAndUpdate({biblioId:data.biblioId},{trends:"1"})
+      .then((resp) => {
+        resolve(resp);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+    
+  })
+}
+const RemoveBookTrends = (data) => {
+  return new Promise(async (resolve, reject) => {
+    Book.findOneAndUpdate({biblioId:data.biblioId},{trends:"0"})
+      .then((resp) => {
+        resolve(resp);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+    
+  })
+}
+const AddBookRelease = (data) => {
+  return new Promise(async (resolve, reject) => {
+    Book.findOneAndUpdate({biblioId:data.biblioId},{release:"1"})
+      .then((resp) => {
+        resolve(resp);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+    
+  })
+}
+const RemoveBookRelease = (data) => {
+  return new Promise(async (resolve, reject) => {
+    Book.findOneAndUpdate({biblioId:data.biblioId},{release:"0"})
+      .then((resp) => {
+        resolve(resp);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+    
+  })
+}
 
 
 module.exports = {
@@ -334,5 +384,9 @@ module.exports = {
   PlaceCheckout,
   ListBoys,
   ListAllCheckIn,
-  ConformReturn
+  ConformReturn,
+  AddBookTrends,
+    RemoveBookTrends,
+    AddBookRelease,
+    RemoveBookRelease
 }
