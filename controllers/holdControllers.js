@@ -25,13 +25,13 @@ const PlaceHold = (data) => {
         book.items.pop();
         resolve(resp.data)
       }).catch((err) => {
-        if (err.response.status === 403) {
+        if (err.status === 403) {
           reject({
             Error:'Item already on hold',
             err,
           })
         }
-        if (err.response.status === 400) {
+        if (err.status === 400) {
           reject({
             Error:'Missing parameters',
             err
