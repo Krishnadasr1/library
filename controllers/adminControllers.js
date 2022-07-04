@@ -186,6 +186,18 @@ const AddBook = (data) => {
       })
   })
 }
+const DeleteBook= (data) => {
+  return new Promise(async (resolve, reject) => {
+    console.log(data.products)
+await Book.findOneAndRemove({biblioId:data.biblioId})
+      .then( (resp) => {
+        resolve("Deleted "+resp.biblioId);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+  })
+}
 const UpdateBook = (data) => {
   return new Promise(async (resolve, reject) => {
  Book.findOneAndUpdate({biblioId:data.biblioId},data)
@@ -374,6 +386,7 @@ module.exports = {
   UpdateWM,
   DeleteWM,
   AddBook,
+  DeleteBook,
   UpdateBook,
   GetBook,
   GetBookByCategory,
