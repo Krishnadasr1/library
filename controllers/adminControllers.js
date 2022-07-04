@@ -175,8 +175,7 @@ const AddBook = (data) => {
   return new Promise(async (resolve, reject) => {
     console.log(data.products)
     const book = new Book({
-      name: data.name,
-      biblioId: data.biblioId,
+      ...data
     });
     book.save()
       .then(async (resp) => {
