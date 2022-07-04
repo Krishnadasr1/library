@@ -99,7 +99,7 @@ router.post("/delete-book", (req, res) => {
 
         res.status(200).json(resp)
     }).catch(err => {
-        res.status(500).json(err)
+        res.status(400).json(err)
     })
 });
 router.post("/update-book", (req, res) => {

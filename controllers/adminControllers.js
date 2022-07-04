@@ -191,9 +191,10 @@ const DeleteBook= (data) => {
     console.log(data.products)
 await Book.findOneAndRemove({biblioId:data.biblioId})
       .then( (resp) => {
-        resolve("Deleted "+resp.biblioId);
+        resolve("deleted "+resp.biblioId);
       }).catch((err) => {
         console.log(err);
+        console.log("Book not found")
         reject(err);
       })
   })
