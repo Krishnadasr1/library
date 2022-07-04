@@ -9,7 +9,7 @@ const bookSchema = new mongoose.Schema({
     biblioId: {
         type: String,
         required: true,
-       // unique:true
+        unique:true
     },
 image:{
     type:String
