@@ -68,13 +68,19 @@ const GetItemById = (data) => {
 
 const SearchBook = (data) => {
   return new Promise(async (resolve, reject) => {
-    let token = await Token.getToken();
+    if(data.txt!="")
+    {
     await Book.find({ name: { '$regex': data.txt } }).then((resp) => { 
         resolve(resp)
       }).catch((err) => {
         console.log(err);
         reject(err);
       })
+    }else{
+      reject({
+        message:"Please enter a text"
+      })
+    }
     })
 }
 const SearchBook1 = (data) => {
