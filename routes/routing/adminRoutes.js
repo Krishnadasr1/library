@@ -17,6 +17,7 @@ const {
     UpdateWM,
     DeleteWM,
     AddBook,
+    DeleteBook,
     UpdateBook,
     GetBook,
     GetBookByCategory,
@@ -90,6 +91,15 @@ router.post("/add-book", (req, res) => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
+    })
+});
+router.post("/delete-book", (req, res) => {
+    console.log(req.body)
+    DeleteBook(req.body).then(resp => {
+
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(400).json(err)
     })
 });
 router.post("/update-book", (req, res) => {

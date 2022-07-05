@@ -7,7 +7,11 @@ const Delivery = require("../models/delivery");
 const bcrypt = require("bcryptjs");
 const axios = require("axios")
 const qs = require("qs")
+const fs = require('fs')
+const util = require('util')
+const unlinkFile = util.promisify(fs.unlink)
 
+const { uploadFile } = require('../s3')
 
 let token = null
 let tokenExpire = new Date()
@@ -150,6 +154,26 @@ const getToken = () => {
       });
 
   }
+  const AddImage = (data, data1) => {
+    return new Promise(async (resolve, reject) => {
+      const file = data
+      const id = data1.id
+      console.log(file)
+        const result = await uploadFile(file)
+      await unlinkFile(file.path)
+      console.log(result.Key)
+      const description = data.description
+  
+     await User.findOneAndUpdate({ _id: id }, { image: result.Key })
+     
+      .then((resp) => {
+        console.log(resp)
+        resolve(resp)
+      }).catch(err =>{
+        reject(err)
+      })
+    })
+  }
   const DeleteUser = (data)=> {
     return new Promise(async (resolve, reject) => {
       let token = await getToken()
@@ -237,6 +261,7 @@ const getToken = () => {
   module.exports={
       RegisterUser,
       LoginUser,
+      AddImage,
       GetUserById,
       GetUserByEmail,
       GetAll,
