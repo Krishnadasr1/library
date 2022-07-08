@@ -9,7 +9,11 @@ const Token = require("./token");
 const PlaceHold = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await Token.getToken();
-    //console.log(data)
+    let book = await Book.findOne({biblioId:data.biblio_id}).exec();
+        if(book != null){
+          let items = book.items
+         // console.log(items.length)
+         if(items.length!=0){
     const req = {
       method: 'post',
       url: `${process.env.kohaBaseUrl}/holds`,
@@ -20,9 +24,9 @@ const PlaceHold = (data) => {
       data: data
     }
     axios(req)
-      .then((resp) => {
-        let book = Book.findOne({biblioId:data.biblioId}).exec();
-        book.items.pop();
+      .then(async(resp) => {
+        await Book.findOneAndUpdate({biblioId:data.biblio_id},
+          { $pull: { 'items':data.item_id }}).exec();
         resolve(resp.data)
       }).catch((err) => {
         if (err.status === 403) {
@@ -37,6 +41,51 @@ const PlaceHold = (data) => {
             err
           })
         }
+        reject(err)
+      })
+    }else{
+      reject({
+        message:"no items to hold"
+      })
+    }
+    }else{
+      reject({
+        message:"book not found"
+      })
+    }
+  })
+}
+const PlaceHold2 = (data) => {
+  return new Promise(async (resolve, reject) => {
+    let token = await Token.getToken();
+    console.log(token)
+    const req = {
+      method: 'post',
+      url: `${process.env.kohaBaseUrl}/holds`,
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      data:data
+    }
+    axios(req)
+      .then((resp) => {
+        console.log(resp)
+        resolve(resp.data)
+      }).catch((err) => {
+        if (err.status === 403) {
+          reject({
+            Error:'Item already on hold',
+            err,
+          })
+        }
+        if (err.status === 400) {
+          reject({
+            Error:'Missing parameters',
+            err
+          })
+        }
+        reject(err)
       })
   })
 }
@@ -98,6 +147,7 @@ const ListHolds = () => {
 module.exports = {
   
   PlaceHold,
+PlaceHold2,
   CancelHold,
   ListHolds
  

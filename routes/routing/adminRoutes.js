@@ -16,6 +16,9 @@ const {
     ViewAllWM,
     UpdateWM,
     DeleteWM,
+    CreateBoy,
+    UpdateBoy,
+    DeleteBoy,
     AddBook,
     DeleteBook,
     UpdateBook,
@@ -55,7 +58,13 @@ router.post("/add-member", (req, res) => {
         res.status(500).json(err)
     })
 });
-
+router.post("/add-boy", (req, res) => {
+    CreateBoy(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
 router.post("/view-member", (req, res) => {
     ViewWM(req.body).then(resp => {
         res.status(200).json(resp)
@@ -79,6 +88,20 @@ router.post("/update-member", (req, res) => {
 });
 router.post("/delete-member", (req, res) => {
     DeleteWM(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/update-boy", (req, res) => {
+    UpdateBoy(req.body).then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/delete-boy", (req, res) => {
+    DeleteBoy(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)

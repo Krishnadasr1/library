@@ -17,6 +17,9 @@ image:{
 items:{
     type:Array
 },
+unavailableItems:{
+    type:Array
+},
 category:{
     type:String,
     enum:["Novel","Story","Poem","Journals","AutoBiography","General"]

@@ -107,6 +107,35 @@ const CreateWM = (data) => {
       })
   })
 }
+const CreateBoy = (data) => {
+  return new Promise((resolve, reject) => {
+    Boy.find({ phone_number: data.phone_number }).exec()
+      .then(user => {
+        if (user.length >= 1) {
+          reject({
+            message: "User exist... Try another phone number",
+            user: JSON.stringify(user)
+          })
+        } else {
+          bcrypt.hash(data.password, 10, (err, hash) => {
+            if (err) {
+              reject(err)
+            } else {
+              const user = Boy({
+                ...data,
+                password: hash
+              })
+              user.save().then(resp => {
+                resolve(resp)
+              }).catch(err => {
+                reject(err)
+              })
+            }
+          })
+        }
+      })
+  })
+}
 const ViewWM = (data) => {
   return new Promise(async (resolve, reject) => {
     await WM.findOne({ phone_number: data.phone_number })
@@ -160,9 +189,33 @@ const DeleteWM = (data) => {
     await WM.findOneAndDelete({ phone_number: data.phone_number }).exec()
       .then((user) => {
         resolve({
-          message: "Ward member deleted",
-          user: user,
+          message: "Ward member deleted"
+        });
+      })
+      .catch((err) => {
+        console.log(err)
+        reject(err);
+      });
+  });
+}
+const UpdateBoy = (data) => {
+  return new Promise(async (resolve, reject) => {
+    await Boy.findOneAndUpdate({ phone_number: data.phone_number }, data).exec()
+      .then((resp) => {
+        resolve(resp);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 
+}
+const DeleteBoy = (data) => {
+  return new Promise(async (resolve, reject) => {
+    await Boy.findOneAndDelete({ phone_number: data.phone_number }).exec()
+      .then((user) => {
+        resolve({
+          message: "delivery person removed"
         });
       })
       .catch((err) => {
@@ -386,6 +439,9 @@ module.exports = {
   ViewAllWM,
   UpdateWM,
   DeleteWM,
+  CreateBoy,
+  UpdateBoy,
+  DeleteBoy,
   AddBook,
   DeleteBook,
   UpdateBook,
