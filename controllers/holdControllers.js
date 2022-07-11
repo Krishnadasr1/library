@@ -13,46 +13,48 @@ const PlaceHold = (data) => {
     if (book != null) {
       let items = book.items
       if (items.length != 0) {
-
+        let itempresent = 0;
         for (let i = 0; i < items.length; i++) {
           if (items[i] == data.item_id) {
-            console.log("item found " + items[i])
-            const req = {
-              method: 'post',
-              url: `${process.env.kohaBaseUrl}/holds`,
-              headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`
-              },
-              data: data
-            }
-            axios(req)
-              .then(async (resp) => {
-                await Book.findOneAndUpdate({ biblioId: data.biblio_id },
-                  { $pull: { 'items': data.item_id } }).exec();
-                resolve(resp.data)
-              }).catch((err) => {
-                if (err.status === 403) {
-                  reject({
-                    message: "Item already on hold",
-                    err,
-                  })
-                }
-                if (err.status === 400) {
-                  reject({
-                    Error: 'Missing parameters',
-                    err
-                  })
-                }
-                reject(err)
-              })
-            break;
-          } else {
-            reject({
-              message: "requested item is not present"
-            })
+           // console.log("item found " + items[i])
+            itempresent = items[i];
           }
+        }
+        if (itempresent != 0) {
+          const req = {
+            method: 'post',
+            url: `${process.env.kohaBaseUrl}/holds`,
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            data: data
+          }
+          axios(req)
+            .then(async (resp) => {
+              await Book.findOneAndUpdate({ biblioId: data.biblio_id },
+                { $pull: { 'items': data.item_id } }).exec();
+              resolve(resp.data)
+            }).catch((err) => {
+              if (err.status === 403) {
+                reject({
+                  message: "Item already on hold",
+                  err,
+                })
+              }
+              if (err.status === 400) {
+                reject({
+                  Error: 'Missing parameters',
+                  err
+                })
+              }
+              reject(err)
+            })
 
+        } else {
+          reject({
+            message: "requested item is not present !"
+          })
         }
 
       } else {
@@ -67,40 +69,7 @@ const PlaceHold = (data) => {
     }
   })
 }
-const PlaceHold2 = (data) => {
-  return new Promise(async (resolve, reject) => {
-    let token = await Token.getToken();
-    console.log(token)
-    const req = {
-      method: 'post',
-      url: `${process.env.kohaBaseUrl}/holds`,
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      data: data
-    }
-    axios(req)
-      .then((resp) => {
-        console.log(resp)
-        resolve(resp.data)
-      }).catch((err) => {
-        if (err.status === 403) {
-          reject({
-            Error: 'Item already on hold',
-            err,
-          })
-        }
-        if (err.status === 400) {
-          reject({
-            Error: 'Missing parameters',
-            err
-          })
-        }
-        reject(err)
-      })
-  })
-}
+
 const CancelHold = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await Token.getToken();
@@ -159,7 +128,6 @@ const ListHolds = () => {
 module.exports = {
 
   PlaceHold,
-  PlaceHold2,
   CancelHold,
   ListHolds
 
