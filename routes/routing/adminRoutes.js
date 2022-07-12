@@ -25,6 +25,7 @@ const {
     GetBook,
     GetBookByCategory,
     AddImage,
+    GetImage,
     ListUsersWithNoPatronId,
     ListUsersWithPatronId,
     PlaceCheckout,
@@ -202,9 +203,17 @@ router.get("/get-book/image/:id", async (req, res) => {
     }
 
 })
+// router.get("/get-book/image/:id", async (req, res) => {
+//     GetImage( req.params).then(resp => {
+//         res.status(200).json(resp)
+//     }).catch(err => {
+//         res.status(400).json(err)
+//     })
+
+// })
 
 router.post('/add-book/image/:id', upload.single('image'),  (req, res) => {
- console.log(req.file)
+// console.log(req.file)
     AddImage(req.file, req.params).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {

@@ -292,10 +292,10 @@ const AddImage = (data, data1) => {
     console.log(file)
       const result = await uploadFile(file)
     await unlinkFile(file.path)
-    console.log(result.Key)
+    console.log(result)
     const description = data.description
 
-   await Book.findOneAndUpdate({ biblioId: id }, { image: result.Key })
+   await Book.findOneAndUpdate({ biblioId: id }, { image: result.Location})
    
     .then((resp) => {
       console.log(resp)
@@ -305,6 +305,18 @@ const AddImage = (data, data1) => {
     })
   })
 }
+// const GetImage = (data) => {
+//   return new Promise(async (resolve, reject) => {
+//     //console.log(data)
+//    await Book.findOne({ biblioId: data.id }, { image: 1 ,_id:0})  
+//     .then((resp) => {
+//       console.log(resp)
+//       resolve(resp)
+//     }).catch(err =>{
+//       reject(err)
+//     })
+//   })
+// }
 
 const ListUsersWithNoPatronId = (data) => {
   return new Promise((resolve, reject) => {
@@ -448,6 +460,7 @@ module.exports = {
   GetBook,
   GetBookByCategory,
   AddImage,
+ // GetImage,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
   PlaceCheckout,
