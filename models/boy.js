@@ -20,7 +20,7 @@ const boySchema = new mongoose.Schema({
         required: true
     },
     ward_number: {
-        type: String,
+        type: Array,
         required: true
     },
     status:{

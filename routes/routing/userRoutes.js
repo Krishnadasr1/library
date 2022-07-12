@@ -107,14 +107,14 @@ router.post("/get_by_patron_id",(req, res) => {
         res.status(500).json(err)
     })
   });
-  router.post("/get-trends",(req, res) => {
+  router.get("/get-trends",(req, res) => {
     GetTrends().then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
   });
-  router.post("/get-release",(req, res) => {
+  router.get("/get-release",(req, res) => {
     GetRelease().then(resp => {
         res.status(200).json(resp)
     }).catch(err => {

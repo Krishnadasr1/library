@@ -144,8 +144,9 @@ const getToken = () => {
   const UpdateUser = (data)=> {
     return new Promise(async (resolve, reject) => {
         await User.findOneAndUpdate({ email: data.email }, data).exec()
-          .then(() => {
+          .then((resp) => {
             resolve(User.findOne({email:data.email}));
+            console.log(resp)
           })
           .catch((err) => {
             console.log(err)

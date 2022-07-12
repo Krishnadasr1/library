@@ -17,6 +17,9 @@ image:{
 items:{
     type:Array
 },
+unavailableItems:{
+    type:Array
+},
 category:{
     type:String,
     enum:["Novel","Story","Poem","Journals","AutoBiography","General"]
@@ -29,6 +32,7 @@ release:{
     type:String,
     default:"0"
 }
-})
+},
+{timestamps:true})
 
 module.exports= mongoose.model('Book', bookSchema)

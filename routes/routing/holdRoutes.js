@@ -5,6 +5,7 @@ const router = express.Router();
 
 const {
       PlaceHold,
+      PlaceHold2,
       CancelHold,
       ListHolds,
       
@@ -15,7 +16,7 @@ router.post("/place_hold",(req, res) => {
   PlaceHold(req.body).then(resp => {
       res.status(200).json(resp)
    }).catch(err => {
-    res.status(500).json(err)
+    res.status(400).json(err)
 })
 });
 router.post("/cancel_hold",(req, res) => {
