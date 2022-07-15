@@ -239,6 +239,7 @@ const AddBook = (data) => {
       })
   })
 }
+
 const DeleteBook= (data) => {
   return new Promise(async (resolve, reject) => {
     console.log(data.products)
@@ -295,7 +296,7 @@ const AddImage = (data, data1) => {
     console.log(result)
     const description = data.description
 
-   await Book.findOneAndUpdate({ biblioId: id }, { image: result.Location})
+   await Book.findOneAndUpdate({ biblioId: id }, { image: result.Key})
    
     .then((resp) => {
       console.log(resp)
@@ -305,19 +306,18 @@ const AddImage = (data, data1) => {
     })
   })
 }
-// const GetImage = (data) => {
-//   return new Promise(async (resolve, reject) => {
-//     //console.log(data)
-//    await Book.findOne({ biblioId: data.id }, { image: 1 ,_id:0})  
-//     .then((resp) => {
-//       console.log(resp)
-//       resolve(resp)
-//     }).catch(err =>{
-//       reject(err)
-//     })
-//   })
-// }
-
+const CorrectImage = () => {
+  return new Promise(async (resolve, reject) => {
+   
+    await Book.updateMany({ image: { '$regex': 'https://'},image:"" }).then((resp) => { 
+        resolve(resp)
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+  
+    })
+}
 const ListUsersWithNoPatronId = (data) => {
   return new Promise((resolve, reject) => {
     User.find({ patron_id: null })
@@ -460,7 +460,7 @@ module.exports = {
   GetBook,
   GetBookByCategory,
   AddImage,
- // GetImage,
+ CorrectImage,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
   PlaceCheckout,
