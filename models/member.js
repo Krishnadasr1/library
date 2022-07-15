@@ -10,7 +10,7 @@ const memberSchema = new mongoose.Schema({
    name: {
     type: String,
     required: true,
-    unique: true,
+   // unique: true,
 },
 ward_number: {
     type: String,
