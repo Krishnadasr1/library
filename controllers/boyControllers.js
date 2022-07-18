@@ -57,7 +57,7 @@ const LoginUser = (data) => {
  
   const GetCheckoutList = (data) => {
     return new Promise(async (resolve, reject) => {
-        Delivery.find({ ward_number: data.ward_number ,checkout_status:"Open"})
+        Delivery.find({ delivery_boy: data.boy_id ,checkout_status:"Open"})
         .then((resp) => {
           console.log(resp);
           resolve(resp);
@@ -69,7 +69,7 @@ const LoginUser = (data) => {
   };
   const GetReturnList = (data) => {
     return new Promise(async (resolve, reject) => {
-        Delivery.find({ ward_number: data.ward_number,return_status:"Open" })
+        Delivery.find({  delivery_boy: data.boy_id ,return_status:"Open" })
         .then((resp) => {
           console.log(resp);
           resolve(resp);
