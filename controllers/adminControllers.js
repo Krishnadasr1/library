@@ -128,6 +128,7 @@ const CreateBoy = (data) => {
               user.save().then(resp => {
                 resolve(resp)
               }).catch(err => {
+                console.log(err)
                 reject(err)
               })
             }
@@ -239,12 +240,13 @@ const AddBook = (data) => {
       })
   })
 }
-const DeleteBook= (data) => {
+
+const DeleteBook = (data) => {
   return new Promise(async (resolve, reject) => {
     console.log(data.products)
-await Book.findOneAndRemove({biblioId:data.biblioId})
-      .then( (resp) => {
-        resolve("deleted "+resp.biblioId);
+    await Book.findOneAndRemove({ biblioId: data.biblioId })
+      .then((resp) => {
+        resolve("deleted " + resp.biblioId);
       }).catch((err) => {
         console.log(err);
         console.log("Book not found")
@@ -254,7 +256,7 @@ await Book.findOneAndRemove({biblioId:data.biblioId})
 }
 const UpdateBook = (data) => {
   return new Promise(async (resolve, reject) => {
- Book.findOneAndUpdate({biblioId:data.biblioId},data)
+    Book.findOneAndUpdate({ biblioId: data.biblioId }, data)
       .then(async (resp) => {
         resolve(resp);
       }).catch((err) => {
@@ -265,7 +267,7 @@ const UpdateBook = (data) => {
 }
 const GetBook = (data) => {
   return new Promise(async (resolve, reject) => {
- Book.find({biblioId:data.biblioId})
+    Book.find({ biblioId: data.biblioId })
       .then(async (resp) => {
         resolve(resp);
       }).catch((err) => {
@@ -276,7 +278,7 @@ const GetBook = (data) => {
 }
 const GetBookByCategory = (data) => {
   return new Promise(async (resolve, reject) => {
- Book.find({category:data.category})
+    Book.find({ category: data.category })
       .then(async (resp) => {
         resolve(resp);
       }).catch((err) => {
@@ -289,35 +291,34 @@ const AddImage = (data, data1) => {
   return new Promise(async (resolve, reject) => {
     const file = data
     const id = data1.id
-    console.log(file)
-      const result = await uploadFile(file)
+    //console.log(file)
+    const result = await uploadFile(file)
     await unlinkFile(file.path)
-    console.log(result)
+   // console.log(result)
     const description = data.description
+//console.log(result.Location)
+    await Book.findOneAndUpdate({ biblioId: id }, { image: result.Key })
 
-   await Book.findOneAndUpdate({ biblioId: id }, { image: result.Location})
-   
-    .then((resp) => {
-      console.log(resp)
-      resolve(resp)
-    }).catch(err =>{
-      reject(err)
-    })
+      .then((resp) => {
+       // console.log(resp)
+        resolve(resp)
+      }).catch(err => {
+        reject(err)
+      })
   })
 }
-// const GetImage = (data) => {
-//   return new Promise(async (resolve, reject) => {
-//     //console.log(data)
-//    await Book.findOne({ biblioId: data.id }, { image: 1 ,_id:0})  
-//     .then((resp) => {
-//       console.log(resp)
-//       resolve(resp)
-//     }).catch(err =>{
-//       reject(err)
-//     })
-//   })
-// }
+const CorrectImage = () => {
+  return new Promise(async (resolve, reject) => {
 
+    await Book.updateMany({ image: { '$regex': 'https://' }, image: "" }).then((resp) => {
+      resolve(resp)
+    }).catch((err) => {
+      console.log(err);
+      reject(err);
+    })
+
+  })
+}
 const ListUsersWithNoPatronId = (data) => {
   return new Promise((resolve, reject) => {
     User.find({ patron_id: null })
@@ -346,16 +347,19 @@ const ListUsersWithPatronId = (data) => {
 
 }
 const PlaceCheckout = (data) => {
-  return new Promise((resolve, reject) => {
-    Boy.find({ ward_number: data.ward_number })
+  return new Promise(async(resolve, reject) => {
+   // db.user.find({codes: 5}, {codes:1})
+   await Boy.find({ ward_number: data.ward_number }, {ward_number:1})
       .then((user) => {
         if (user.length < 1) {
           reject({
             message: "No Delivery Person in the Ward"
           })
         } else {
+          console.log(user[0]._id)
           const delivery = Delivery({
             ...data,
+            delivery_boy:user[0]._id
           })
           delivery.save().then(resp => {
             resolve(resp);
@@ -382,10 +386,10 @@ const ListAllCheckIn = () => {
 const ConformReturn = (data) => {
   return new Promise(async (resolve, reject) => {
     Delivery.findOneAndUpdate({ _id: data.order_id }, { return_status: "Conformed" })
-      .then(async() => {
-       let book= await Book.findOne({biblioId:data.biblioId}).exec()
-      book.items.push(data.itemId);
-       book.save();
+      .then(async () => {
+        let book = await Book.findOne({ biblioId: data.biblioId }).exec()
+        book.items.push(data.itemId);
+        book.save();
         resolve(Delivery.findOne({ _id: data.order_id }));
       })
       .catch((err) => {
@@ -395,50 +399,50 @@ const ConformReturn = (data) => {
 };
 const AddBookTrends = (data) => {
   return new Promise(async (resolve, reject) => {
-    Book.findOneAndUpdate({biblioId:data.biblioId},{trends:"1"})
+    Book.findOneAndUpdate({ biblioId: data.biblioId }, { trends: "1" })
       .then((resp) => {
         resolve(resp);
       }).catch((err) => {
         console.log(err);
         reject(err);
       })
-    
+
   })
 }
 const RemoveBookTrends = (data) => {
   return new Promise(async (resolve, reject) => {
-    Book.findOneAndUpdate({biblioId:data.biblioId},{trends:"0"})
+    Book.findOneAndUpdate({ biblioId: data.biblioId }, { trends: "0" })
       .then((resp) => {
         resolve(resp);
       }).catch((err) => {
         console.log(err);
         reject(err);
       })
-    
+
   })
 }
 const AddBookRelease = (data) => {
   return new Promise(async (resolve, reject) => {
-    Book.findOneAndUpdate({biblioId:data.biblioId},{release:"1"})
+    Book.findOneAndUpdate({ biblioId: data.biblioId }, { release: "1" })
       .then((resp) => {
         resolve(resp);
       }).catch((err) => {
         console.log(err);
         reject(err);
       })
-    
+
   })
 }
 const RemoveBookRelease = (data) => {
   return new Promise(async (resolve, reject) => {
-    Book.findOneAndUpdate({biblioId:data.biblioId},{release:"0"})
+    Book.findOneAndUpdate({ biblioId: data.biblioId }, { release: "0" })
       .then((resp) => {
         resolve(resp);
       }).catch((err) => {
         console.log(err);
         reject(err);
       })
-    
+
   })
 }
 
@@ -460,7 +464,7 @@ module.exports = {
   GetBook,
   GetBookByCategory,
   AddImage,
- // GetImage,
+  CorrectImage,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
   PlaceCheckout,
@@ -468,7 +472,7 @@ module.exports = {
   ListAllCheckIn,
   ConformReturn,
   AddBookTrends,
-    RemoveBookTrends,
-    AddBookRelease,
-    RemoveBookRelease
+  RemoveBookTrends,
+  AddBookRelease,
+  RemoveBookRelease
 }

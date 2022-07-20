@@ -27,6 +27,9 @@ const deliverySchema = new mongoose.Schema({
         type: String,
     required: true
     },
+    delivery_boy:{
+        type:String
+    },
     barcode: {
         type: String,
     required: true
