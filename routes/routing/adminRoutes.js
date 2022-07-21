@@ -182,25 +182,29 @@ router.post("/add-book-new-release", (req, res) => {
 router.post("/remove-book-new-release", (req, res) => {
     console.log(req.body)
     RemoveBookRelease(req.body).then(resp => {
- res.status(200).json(resp)
+        res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)
     })
 });
 
-router.get("/get-book/image/:id", async (req, res,err) => {
-    let book = await Book.findOne({ biblioId:  req.params.id }).exec();
-    if(book!=null){
+router.get("/get-book/image/:id", async (req, res, err) => {
+    
+    let book = await Book.findOne({ biblioId: req.params.id }).exec();
+    if (book != null) {
         //console.log(book.image)
-    if(book.image != null&&book.image!="" ){
-        let readStream;     
-        readStream = getFileStream(book.image)
-        readStream.pipe(res)
-
-    }else{
-        res.status(404).send('Image Not Found'); 
-    }
-    }else{
+        if (book.image != null && book.image != "") {
+            let readStream;
+            readStream = getFileStream(book.image)
+            readStream.pipe(res)
+            readStream.on('error', function () {
+                res.status(404).send("Error on S3 bucket key:No such key");
+            });
+        
+        } else {
+            res.status(404).send('Image Not Found');
+        }
+    } else {
         res.status(404).send('Book Not Found');
     }
 
@@ -214,8 +218,8 @@ router.get("/correct-image-id", async (req, res) => {
 
 })
 
-router.post('/add-book/image/:id', upload.single('image'),  (req, res) => {
-// console.log(req.file)
+router.post('/add-book/image/:id', upload.single('image'), (req, res) => {
+    // console.log(req.file)
     AddImage(req.file, req.params).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {

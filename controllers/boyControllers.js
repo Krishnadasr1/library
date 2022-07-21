@@ -105,7 +105,7 @@ const LoginUser = (data) => {
   };
   const PastOrders = (data) => {
     return new Promise(async (resolve, reject) => {
-      await  Delivery.find({ ward_number: data.ward_number })
+      await  Delivery.find({delivery_boy: data.boy_id })
         .then((resp) => {
          // console.log(resp);
           resolve(resp);
