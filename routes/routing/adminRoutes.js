@@ -192,7 +192,7 @@ router.get("/get-book/image/:id", async (req, res, err) => {
     
     let book = await Book.findOne({ biblioId: req.params.id }).exec();
     if (book != null) {
-        //console.log(book.image)
+        console.log(book.image)
         if (book.image != null && book.image != "") {
             let readStream;
             readStream = getFileStream(book.image)

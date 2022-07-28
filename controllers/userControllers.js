@@ -143,15 +143,21 @@ const getToken = () => {
   }
   const UpdateUser = (data)=> {
     return new Promise(async (resolve, reject) => {
-        await User.findOneAndUpdate({ email: data.email }, data).exec()
+      const { email} = data;  
+      if(email != null)  {
+        console.log(data)
+          await User.findOneAndUpdate({ email:email},data)
           .then((resp) => {
-            resolve(User.findOne({email:data.email}));
-            console.log(resp)
+            resolve(resp);
+            console.log("response "+resp)
           })
           .catch((err) => {
             console.log(err)
             reject(err);
           });
+        }else{
+          reject("please provide an email")
+        }
       });
 
   }
