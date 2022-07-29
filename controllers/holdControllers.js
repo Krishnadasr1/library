@@ -16,7 +16,6 @@ const PlaceHold = (data) => {
         let itempresent = 0;
         for (let i = 0; i < items.length; i++) {
           if (items[i] == data.item_id) {
-           // console.log("item found " + items[i])
             itempresent = items[i];
           }
         }
@@ -73,7 +72,6 @@ const PlaceHold = (data) => {
 const CancelHold = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await Token.getToken();
-    console.log(data)
     const req = {
       method: 'delete',
       url: `${process.env.kohaBaseUrl}/holds/${data.holdId}`,

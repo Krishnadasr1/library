@@ -7,8 +7,7 @@ const {
     GetBook,
     GetItem,
     GetItemById,
-    SearchBook,
-    SearchBook1
+    SearchBook
   } = require("../../controllers/bookControllers");
 
 router.post("/get_book",(req, res) => {
@@ -40,12 +39,5 @@ router.post("/get-item-biblio",(req, res) => {
       res.status(400).json(err);
     });
   })
-  router.post('/search',(req,res) => {
-    SearchBook1(req.body).then((resp) => {
-      res.status(200).json(resp);
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-    });
-  })
+  
 module.exports = router;

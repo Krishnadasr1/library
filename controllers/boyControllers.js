@@ -3,9 +3,7 @@ const Delivery = require("../models/delivery");
 
 const bcrypt = require('bcryptjs');
 const user = require("../models/user");
-//const jwt = require("jsonwebtoken");
-//const _ = require("lodash");
-//const otpGenerator = require("otp-generator");
+
 
 
 const LoginUser = (data) => {
@@ -46,7 +44,6 @@ const LoginUser = (data) => {
     return new Promise(async (resolve, reject) => {
         Boy.findOne({ _id: data.id })
         .then((resp) => {
-          console.log(resp);
           resolve(resp);
         })
         .catch((err) => {
@@ -59,7 +56,6 @@ const LoginUser = (data) => {
     return new Promise(async (resolve, reject) => {
         Delivery.find({ delivery_boy: data.boy_id ,checkout_status:"Open"})
         .then((resp) => {
-          console.log(resp);
           resolve(resp);
         })
         .catch((err) => {
@@ -71,7 +67,6 @@ const LoginUser = (data) => {
     return new Promise(async (resolve, reject) => {
         Delivery.find({  delivery_boy: data.boy_id ,return_status:"Open" })
         .then((resp) => {
-          console.log(resp);
           resolve(resp);
         })
         .catch((err) => {
@@ -83,7 +78,6 @@ const LoginUser = (data) => {
     return new Promise(async (resolve, reject) => {
       await  Delivery.findOneAndUpdate({ _id: data.order_id },{checkout_status:"Closed"})
         .then((resp) => {
-         // console.log(resp);
           resolve(Delivery.findOne({_id:data.order_id}));
         })
         .catch((err) => {
@@ -95,7 +89,6 @@ const LoginUser = (data) => {
     return new Promise(async (resolve, reject) => {
         Delivery.findOneAndUpdate({ _id: data.order_id },{return_status:"Closed"})
         .then((resp) => {
-          console.log(resp);
           resolve(Delivery.findOne({_id:data.order_id}));
         })
         .catch((err) => {
@@ -107,7 +100,6 @@ const LoginUser = (data) => {
     return new Promise(async (resolve, reject) => {
       await  Delivery.find({delivery_boy: data.boy_id })
         .then((resp) => {
-         // console.log(resp);
           resolve(resp);
         })
         .catch((err) => {

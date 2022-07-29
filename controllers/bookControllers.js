@@ -85,7 +85,6 @@ const SearchBook = (data) => {
           reject(err)
         })
       } else {
-        console.log((resPerPage * page))
         await Book.find({ name: { '$regex': data.txt } }).skip((resPerPage * page) - resPerPage)
           .limit(resPerPage).then(async (resp) => {
             resolve({
@@ -107,44 +106,11 @@ const SearchBook = (data) => {
     }
   })
 }
-const SearchBook1 = (data) => {
-  return new Promise(async (resolve, reject) => {
-    let token = await Token.getToken();
-    let books = [];
-    let booksKoha = [];
-    books = await Book.find({ name: { '$regex': data.txt } }).then((resp) => {
-      console.log(books)
-      books.forEach(item => {
-        let id = item.biblioId;
-        const req = {
-          method: 'get',
-          url: `${process.env.kohaBaseUrl}/biblios/${id}`,
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${token}`
-          }
-        }
-        axios(req).then((resp) => {
-          booksKoha.push(resp.data)
-          console.log(booksKoha)
-        }).catch((err) => {
-          console.log(err);
-          reject(err);
-        })
-      })
-      //resolve(booksKoha)
-      resp.json(booksKoha);
-    }).catch((error) => {
-      reject(error)
-    })
-  })
-}
+
 
 
 module.exports = {
   GetBook,
   GetItem,
   GetItemById,
-  SearchBook,
-  SearchBook1
-}
+  SearchBook}

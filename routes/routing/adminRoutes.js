@@ -25,7 +25,6 @@ const {
     GetBook,
     GetBookByCategory,
     AddImage,
-    CorrectImage,
     ListUsersWithNoPatronId,
     ListUsersWithPatronId,
     PlaceCheckout,
@@ -109,7 +108,6 @@ router.post("/delete-boy", (req, res) => {
     })
 });
 router.post("/add-book", (req, res) => {
-    console.log(req.body)
     AddBook(req.body).then(resp => {
 
         res.status(200).json(resp)
@@ -118,7 +116,6 @@ router.post("/add-book", (req, res) => {
     })
 });
 router.post("/delete-book", (req, res) => {
-    console.log(req.body)
     DeleteBook(req.body).then(resp => {
 
         res.status(200).json(resp)
@@ -127,7 +124,6 @@ router.post("/delete-book", (req, res) => {
     })
 });
 router.post("/update-book", (req, res) => {
-    console.log(req.body)
     UpdateBook(req.body).then(resp => {
 
         res.status(200).json(resp)
@@ -136,7 +132,6 @@ router.post("/update-book", (req, res) => {
     })
 });
 router.post("/get-book", (req, res) => {
-    console.log(req.body)
     GetBook(req.body).then(resp => {
 
         res.status(200).json(resp)
@@ -145,7 +140,6 @@ router.post("/get-book", (req, res) => {
     })
 });
 router.post("/get-book-by-category", (req, res) => {
-    console.log(req.body)
     GetBookByCategory(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
@@ -153,7 +147,6 @@ router.post("/get-book-by-category", (req, res) => {
     })
 })
 router.post("/add-book-top-trends", (req, res) => {
-    console.log(req.body)
     AddBookTrends(req.body).then(resp => {
 
         res.status(200).json(resp)
@@ -162,7 +155,6 @@ router.post("/add-book-top-trends", (req, res) => {
     })
 });
 router.post("/remove-book-top-trends", (req, res) => {
-    console.log(req.body)
     RemoveBookTrends(req.body).then(resp => {
 
         res.status(200).json(resp)
@@ -171,7 +163,6 @@ router.post("/remove-book-top-trends", (req, res) => {
     })
 });
 router.post("/add-book-new-release", (req, res) => {
-    console.log(req.body)
     AddBookRelease(req.body).then(resp => {
 
         res.status(200).json(resp)
@@ -180,7 +171,6 @@ router.post("/add-book-new-release", (req, res) => {
     })
 });
 router.post("/remove-book-new-release", (req, res) => {
-    console.log(req.body)
     RemoveBookRelease(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
@@ -192,7 +182,6 @@ router.get("/get-book/image/:id", async (req, res, err) => {
     
     let book = await Book.findOne({ biblioId: req.params.id }).exec();
     if (book != null) {
-        console.log(book.image)
         if (book.image != null && book.image != "") {
             let readStream;
             readStream = getFileStream(book.image)
@@ -209,17 +198,9 @@ router.get("/get-book/image/:id", async (req, res, err) => {
     }
 
 })
-router.get("/correct-image-id", async (req, res) => {
-    CorrectImage().then(resp => {
-        res.status(200).json(resp)
-    }).catch(err => {
-        res.status(400).json(err)
-    })
 
-})
 
 router.post('/add-book/image/:id', upload.single('image'), (req, res) => {
-    // console.log(req.file)
     AddImage(req.file, req.params).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {

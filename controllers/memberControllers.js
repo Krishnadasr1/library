@@ -53,7 +53,6 @@ const LoginWardmember = (data) => {
     return new Promise(async (resolve,reject) => {
       WardMember.findOne({ _id: data.member_id })
       .then((user) => {
-        console.log(user)
         bcrypt.hash(data.password, 10, (err, hash) => {
           if(err){
             reject(err)
@@ -82,11 +81,9 @@ const LoginWardmember = (data) => {
 }
 
 const UpdateDeliveryboy = (data) => {
-    console.log(data);
     return new Promise(async (resolve, reject) => {
         Deliveryboy.findOneAndUpdate({ _id: data.id }, data)
         .then((resp) => {
-          console.log(resp);
           resolve(resp);
         })
         .catch((err) => {
@@ -107,8 +104,7 @@ const UpdateDeliveryboy = (data) => {
   };
   const  ListDeliveryboy = (data) =>{
     return new Promise((resolve,reject)=>{
-     // WardMember.findOne({ _id: data.wardMemberId })
-        Deliveryboy.find({wardMemberId:data.wardMemberId})
+         Deliveryboy.find({wardMemberId:data.wardMemberId})
       .then((resp) => {
         resolve(resp);
       })
