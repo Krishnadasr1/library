@@ -227,7 +227,6 @@ const DeleteBoy = (data) => {
 }
 const AddBook = (data) => {
   return new Promise(async (resolve, reject) => {
-    console.log(data.products)
     const book = new Book({
       ...data
     });
@@ -243,7 +242,6 @@ const AddBook = (data) => {
 
 const DeleteBook = (data) => {
   return new Promise(async (resolve, reject) => {
-    console.log(data.products)
     await Book.findOneAndRemove({ biblioId: data.biblioId })
       .then((resp) => {
         resolve("deleted " + resp.biblioId);
@@ -291,34 +289,30 @@ const AddImage = (data, data1) => {
   return new Promise(async (resolve, reject) => {
     const file = data
     const id = data1.id
-    //console.log(file)
     const result = await uploadFile(file)
     await unlinkFile(file.path)
-   // console.log(result)
     const description = data.description
-//console.log(result.Location)
     await Book.findOneAndUpdate({ biblioId: id }, { image: result.Key })
 
       .then((resp) => {
-       // console.log(resp)
         resolve(resp)
       }).catch(err => {
         reject(err)
       })
   })
 }
-const CorrectImage = () => {
-  return new Promise(async (resolve, reject) => {
+// const CorrectImage = () => {
+//   return new Promise(async (resolve, reject) => {
 
-    await Book.updateMany({ image: { '$regex': 'https://' }, image: "" }).then((resp) => {
-      resolve(resp)
-    }).catch((err) => {
-      console.log(err);
-      reject(err);
-    })
+//     await Book.updateMany({ image: { '$regex': 'https://' }, image: "" }).then((resp) => {
+//       resolve(resp)
+//     }).catch((err) => {
+//       console.log(err);
+//       reject(err);
+//     })
 
-  })
-}
+//   })
+// }
 const ListUsersWithNoPatronId = (data) => {
   return new Promise((resolve, reject) => {
     User.find({ patron_id: null })
@@ -336,7 +330,6 @@ const ListUsersWithPatronId = (data) => {
   return new Promise((resolve, reject) => {
     User.find({ patron_id: { $not: { $eq: null } } })
       .then((resp) => {
-        console.log(resp)
         resolve(resp);
       })
       .catch((err) => {
@@ -348,7 +341,6 @@ const ListUsersWithPatronId = (data) => {
 }
 const PlaceCheckout = (data) => {
   return new Promise(async(resolve, reject) => {
-   // db.user.find({codes: 5}, {codes:1})
    await Boy.find({ ward_number: data.ward_number }, {ward_number:1})
       .then((user) => {
         if (user.length < 1) {
@@ -356,7 +348,6 @@ const PlaceCheckout = (data) => {
             message: "No Delivery Person in the Ward"
           })
         } else {
-          console.log(user[0]._id)
           const delivery = Delivery({
             ...data,
             delivery_boy:user[0]._id
@@ -375,7 +366,6 @@ const ListAllCheckIn = () => {
   return new Promise(async (resolve, reject) => {
     Delivery.find({ return_status: "Closed" })
       .then((resp) => {
-        console.log(resp);
         resolve(resp);
       })
       .catch((err) => {
@@ -464,7 +454,6 @@ module.exports = {
   GetBook,
   GetBookByCategory,
   AddImage,
-  CorrectImage,
   ListUsersWithNoPatronId,
   ListUsersWithPatronId,
   PlaceCheckout,

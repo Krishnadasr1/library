@@ -7,7 +7,6 @@ const Token = require("./token");
 const GetLibrary = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await Token.getToken();
-    //console.log(data)
     const req = {
       method: 'get',
       url: `${process.env.kohaBaseUrl}/libraries/${data.id}`,
@@ -32,7 +31,6 @@ const GetLibrary = (data) => {
 const UpdateLibrary = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await Token.getToken();
-    //console.log(data)
     const req = {
       method: 'post',
       url: `${process.env.kohaBaseUrl}/libraries/${data.id}`,

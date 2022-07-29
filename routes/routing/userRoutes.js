@@ -22,7 +22,6 @@ const { RegisterUser,
      router.get("/get-user/image/:id", async (req, res) => {
         let user = await User.findOne({ _id:  req.params.id }).exec();
         if(user!=null){
-            console.log(user.image)
         if(user.image != null ){
             const readStream = getFileStream(user.image)
             readStream.pipe(res) 
@@ -36,7 +35,6 @@ const { RegisterUser,
     })
     
     router.post('/add-user/image/:id', upload.single('image'),  (req, res) => {
-     console.log(req.file)
         AddImage(req.file, req.params).then(resp => {
             res.status(200).json(resp)
         }).catch(err => {

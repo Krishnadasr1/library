@@ -7,7 +7,6 @@ const Token = require("./token");
 const CreatePatron = (data) => {
   return new Promise(async (resolve, reject) => {
     let token = await Token.getToken();
-    //console.log(data)
     const req = {
       method: 'post',
       url: `${process.env.kohaBaseUrl}/patrons`,
@@ -38,7 +37,6 @@ const CreatePatron = (data) => {
 const GetPatron = (data) => {
     return new Promise(async (resolve, reject) => {
       let token = await Token.getToken();
-      //console.log(data)
       const req = {
         method: 'get',
         url: `${process.env.kohaBaseUrl}/patrons/${data.id}`,

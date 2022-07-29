@@ -36,7 +36,6 @@ const getToken = () => {
       const resp = await axios(req)
       token = resp.data.access_token
       tokenExpire = new Date(Date.now() + resp.data.expires_in * 1000)
-      console.log('getToken koha', token, tokenExpire)
     }
     resolve(token)
   })
@@ -143,15 +142,20 @@ const getToken = () => {
   }
   const UpdateUser = (data)=> {
     return new Promise(async (resolve, reject) => {
-        await User.findOneAndUpdate({ email: data.email }, data).exec()
+      const { email} = data;  
+      if(email != null)  {
+          await User.findOneAndUpdate({ email:email},data)
           .then((resp) => {
-            resolve(User.findOne({email:data.email}));
-            console.log(resp)
+            resolve(resp);
+            console.log("response "+resp)
           })
           .catch((err) => {
             console.log(err)
             reject(err);
           });
+        }else{
+          reject("please provide an email")
+        }
       });
 
   }
@@ -159,10 +163,8 @@ const getToken = () => {
     return new Promise(async (resolve, reject) => {
       const file = data
       const id = data1.id
-      console.log(file)
         const result = await uploadFile(file)
       await unlinkFile(file.path)
-      console.log(result.Key)
       const description = data.description
   
      await User.findOneAndUpdate({ _id: id }, { image: result.Key })
@@ -178,7 +180,6 @@ const getToken = () => {
   const DeleteUser = (data)=> {
     return new Promise(async (resolve, reject) => {
       let token = await getToken()
-      //console.log(data)
       const req = {
         method: 'delete',
         url: `${process.env.kohaBaseUrl}/patrons/${data.patron_id}`,
