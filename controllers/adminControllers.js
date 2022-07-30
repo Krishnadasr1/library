@@ -366,7 +366,7 @@ const ListUsersWithPatronId = (data) => {
 }
 const PlaceCheckout = (data) => {
   return new Promise(async(resolve, reject) => {
-   await Boy.find({ ward_number: data.ward_number }, {ward_number:1})
+   await Boy.find({ ward_number: data.ward_number })
       .then((user) => {
         if (user.length < 1) {
           reject({
