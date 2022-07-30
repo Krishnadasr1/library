@@ -65,7 +65,7 @@ const GetItemById = (data) => {
 }
 
 
-
+// { $regex: /^ABC/i }
 const SearchBook = (data) => {
   return new Promise(async (resolve, reject) => {
     if (data.txt != "") {
@@ -73,7 +73,9 @@ const SearchBook = (data) => {
       const page = data.page || 1;
       const numOfItems = await Book.count({ name: { '$regex': data.txt } });
       if (numOfItems < resPerPage) {
-        await Book.find({ name: { '$regex': data.txt } }).then((resp) => {
+        const txt = data.txt
+        await Book.find({ name: { '$regex': data.txt } })
+        .then((resp) => {
           resolve({
             CurrentPage: 1,
             TotalPages: 1,
@@ -85,7 +87,8 @@ const SearchBook = (data) => {
           reject(err)
         })
       } else {
-        await Book.find({ name: { '$regex': data.txt } }).skip((resPerPage * page) - resPerPage)
+        await Book.find({ name: { '$regex': data.txt } })
+        .skip((resPerPage * page) - resPerPage)
           .limit(resPerPage).then(async (resp) => {
             resolve({
               CurrentPage: page,

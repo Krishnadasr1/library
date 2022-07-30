@@ -193,11 +193,10 @@ const getToken = () => {
       axios(req)
         .then((resp) => {
           holds = resp.data
-          console.log(holds)
         }).catch((err) => {
           reject(err)
         })
-
+//for(int i =0)
         
 
       // const req = {
