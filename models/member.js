@@ -13,7 +13,7 @@ const memberSchema = new mongoose.Schema({
    // unique: true,
 },
 ward_number: {
-    type: String,
+    type: Number,
     required: true,
     
 },
