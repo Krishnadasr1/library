@@ -24,7 +24,7 @@ const deliverySchema = new mongoose.Schema({
     required: true
     },
     ward_number: {
-        type: String,
+        type: Number,
     required: true
     },
     delivery_boy:{

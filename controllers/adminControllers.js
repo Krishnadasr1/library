@@ -274,15 +274,40 @@ const GetBook = (data) => {
       })
   })
 }
+
 const GetBookByCategory = (data) => {
   return new Promise(async (resolve, reject) => {
-    Book.find({ category: data.category })
-      .then(async (resp) => {
-        resolve(resp);
-      }).catch((err) => {
-        console.log(err);
-        reject(err);
+     const resPerPage = 3;
+     const page = data.page || 1;
+     const numOfItems = await Book.count({category:data.category});
+     if(numOfItems<resPerPage){
+      await Book.find({category:data.category}).then((resp) =>{
+        resolve({
+          CurrentPage:1,
+          TotalPages:1,
+          Category:data.category,
+          TotalBooks:numOfItems,
+          data:resp
+        })
+      }).catch((err) =>{
+        reject(err)
       })
+     }else{
+      await Book.find({category:data.category})
+      .skip((resPerPage*page) - resPerPage)
+      .limit(resPerPage)
+      .then(async (resp) =>{
+        resolve({
+          CurrentPage:page,
+          TotalPages:Math.ceil(numOfItems/resPerPage),
+          Category:data.category,
+          TotalBooks:numOfItems,
+          data:resp
+        })
+      }).catch((err) =>{
+        reject(err)
+      })
+     }
   })
 }
 const AddImage = (data, data1) => {
@@ -341,7 +366,7 @@ const ListUsersWithPatronId = (data) => {
 }
 const PlaceCheckout = (data) => {
   return new Promise(async(resolve, reject) => {
-   await Boy.find({ ward_number: data.ward_number }, {ward_number:1})
+   await Boy.find({ ward_number: data.ward_number })
       .then((user) => {
         if (user.length < 1) {
           reject({
@@ -355,6 +380,7 @@ const PlaceCheckout = (data) => {
           delivery.save().then(resp => {
             resolve(resp);
           }).catch(err => {
+            console.log(err)
             reject(err)
           })
         }
@@ -435,6 +461,20 @@ const RemoveBookRelease = (data) => {
 
   })
 }
+const DeleteMemberFromDB = (data) => {
+  return new Promise(async (resolve, reject) => {
+    await User.findOneAndDelete({ _id: data.id }).exec()
+      .then(() => {
+        resolve({
+          message: "Membership request removed"
+        });
+      })
+      .catch((err) => {
+        console.log(err)
+        reject(err);
+      });
+  });
+}
 
 
 module.exports = {
@@ -463,5 +503,6 @@ module.exports = {
   AddBookTrends,
   RemoveBookTrends,
   AddBookRelease,
-  RemoveBookRelease
+  RemoveBookRelease,
+  DeleteMemberFromDB
 }
