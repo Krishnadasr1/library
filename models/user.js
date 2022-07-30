@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     ward_number: {
-        type: String,
+        type: Number,
         required: true
     },
     post_office: {
