@@ -34,7 +34,8 @@ const {
     AddBookTrends,
     RemoveBookTrends,
     AddBookRelease,
-    RemoveBookRelease
+    RemoveBookRelease,
+    DeleteMemberFromDB
 } = require("../../controllers/adminControllers");
 
 router.post("/register", (req, res) => {
@@ -211,6 +212,13 @@ router.post('/add-book/image/:id', upload.single('image'), (req, res) => {
 
 router.get("/list-membership-requests", (req, res) => {
     ListUsersWithNoPatronId().then(resp => {
+        res.status(200).json(resp)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+});
+router.post("/cancel-membership-request", (req, res) => {
+    DeleteMemberFromDB(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
         res.status(500).json(err)

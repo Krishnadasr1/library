@@ -179,10 +179,12 @@ const getToken = () => {
   }
   const DeleteUser = (data)=> {
     return new Promise(async (resolve, reject) => {
+
       let token = await getToken()
+      let holds = [];
       const req = {
-        method: 'delete',
-        url: `${process.env.kohaBaseUrl}/patrons/${data.patron_id}`,
+        method: 'get',
+        url: `${process.env.kohaBaseUrl}/holds`,
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${token}`
@@ -190,23 +192,41 @@ const getToken = () => {
       }
       axios(req)
         .then((resp) => {
-          resolve(resp.data)
+          holds = resp.data
+          console.log(holds)
         }).catch((err) => {
-          if (err.response.status === 400) {
-            reject({
-              Error: "Bad parameters or Missing parameters"
-            })
-          }
           reject(err)
         })
-        await User.findOneAndDelete({ _id: data.database_id }).exec()
-          .then((resp) => {
-            resolve(resp);
-          })
-          .catch((err) => {
-            console.log(err)
-            reject(err);
-          });
+
+        
+
+      // const req = {
+      //   method: 'delete',
+      //   url: `${process.env.kohaBaseUrl}/patrons/${data.patron_id}`,
+      //   headers: {
+      //     Accept: 'application/json',
+      //     Authorization: `Bearer ${token}`
+      //   }
+      // }
+      // axios(req)
+      //   .then((resp) => {
+      //     resolve(resp.data)
+      //   }).catch((err) => {
+      //     if (err.response.status === 400) {
+      //       reject({
+      //         Error: "Bad parameters or Missing parameters"
+      //       })
+      //     }
+      //     reject(err)
+      //   })
+      //   await User.findOneAndDelete({ _id: data.database_id }).exec()
+      //     .then((resp) => {
+      //       resolve(resp);
+      //     })
+          // .catch((err) => {
+          //   console.log(err)
+          //   reject(err);
+          // });
       });
 
   }

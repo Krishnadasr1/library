@@ -435,6 +435,20 @@ const RemoveBookRelease = (data) => {
 
   })
 }
+const DeleteMemberFromDB = (data) => {
+  return new Promise(async (resolve, reject) => {
+    await User.findOneAndDelete({ _id: data.id }).exec()
+      .then(() => {
+        resolve({
+          message: "Membership request removed"
+        });
+      })
+      .catch((err) => {
+        console.log(err)
+        reject(err);
+      });
+  });
+}
 
 
 module.exports = {
@@ -463,5 +477,6 @@ module.exports = {
   AddBookTrends,
   RemoveBookTrends,
   AddBookRelease,
-  RemoveBookRelease
+  RemoveBookRelease,
+  DeleteMemberFromDB
 }
