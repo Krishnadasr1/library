@@ -83,7 +83,8 @@ const CancelHold = (data) => {
     axios(req)
       .then(async (resp) => {
         let book = await Book.findOne({ biblioId: data.biblioId }).exec();
-        book.items.push(data.itemId);
+        const item = parseInt(data.itemId)
+        book.items.push(item);
         book.save();
         resolve(resp.data)
       }).catch((err) => {
