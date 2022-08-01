@@ -404,7 +404,8 @@ const ConformReturn = (data) => {
     Delivery.findOneAndUpdate({ _id: data.order_id }, { return_status: "Conformed" })
       .then(async () => {
         let book = await Book.findOne({ biblioId: data.biblioId }).exec()
-        book.items.push(data.itemId);
+        const item = parseInt(data.itemId)
+        book.items.push(item);
         book.save();
         resolve(Delivery.findOne({ _id: data.order_id }));
       })
