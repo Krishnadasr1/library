@@ -277,7 +277,7 @@ const GetBook = (data) => {
 
 const GetBookByCategory = (data) => {
   return new Promise(async (resolve, reject) => {
-     const resPerPage = 3;
+     const resPerPage = 6;
      const page = data.page || 1;
      const numOfItems = await Book.count({category:data.category});
      if(numOfItems<resPerPage){

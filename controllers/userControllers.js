@@ -181,10 +181,11 @@ const getToken = () => {
     return new Promise(async (resolve, reject) => {
 
       let token = await getToken()
+    
       let holds = [];
       const req = {
         method: 'get',
-        url: `${process.env.kohaBaseUrl}/holds`,
+        url: `${process.env.kohaBaseUrl}/patrons/${data.patron_id}/holds`,
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${token}`
@@ -196,36 +197,48 @@ const getToken = () => {
         }).catch((err) => {
           reject(err)
         })
-//for(int i =0)
-        
+        if(holds!=null){
+          reject({
+            message:"Pending holds!!! Delete user can be completed after cancelling the holds "
+          })
+        }else{
+          const delivery = [];
+          delivery = Delivery.find({patron_id:data.patron_id})
+          if(delivery!=null){
+            reject({
+              message:"Pending chechouts!!! Delete user can be completed once books are retured"
+            })
+          }
+          const req1 = {
+        method: 'delete',
+        url: `${process.env.kohaBaseUrl}/patrons/${data.patron_id}`,
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }
+      axios(req1)
+        .then((resp) => {
+          resolve(resp.data)
+        }).catch((err) => {
+          if (err.response.status === 400) {
+            reject({
+              Error: "Bad parameters or Missing parameters"
+            })
+          }
+          reject(err)
+        })
+        await User.findOneAndDelete({ _id: data.database_id }).exec()
+          .then((resp) => {
+            resolve(resp);
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err);
+          });
 
-      // const req = {
-      //   method: 'delete',
-      //   url: `${process.env.kohaBaseUrl}/patrons/${data.patron_id}`,
-      //   headers: {
-      //     Accept: 'application/json',
-      //     Authorization: `Bearer ${token}`
-      //   }
-      // }
-      // axios(req)
-      //   .then((resp) => {
-      //     resolve(resp.data)
-      //   }).catch((err) => {
-      //     if (err.response.status === 400) {
-      //       reject({
-      //         Error: "Bad parameters or Missing parameters"
-      //       })
-      //     }
-      //     reject(err)
-      //   })
-      //   await User.findOneAndDelete({ _id: data.database_id }).exec()
-      //     .then((resp) => {
-      //       resolve(resp);
-      //     })
-          // .catch((err) => {
-          //   console.log(err)
-          //   reject(err);
-          // });
+        }
+              
       });
 
   }

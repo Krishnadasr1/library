@@ -88,7 +88,7 @@ router.post("/get_by_patron_id",(req, res) => {
     DeleteUser(req.body).then(resp => {
         res.status(200).json(resp)
     }).catch(err => {
-        res.status(500).json(err)
+        res.status(400).json(err)
     })
   });
   router.post("/place-return",(req, res) => {
