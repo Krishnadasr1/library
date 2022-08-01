@@ -69,7 +69,7 @@ const GetItemById = (data) => {
 const SearchBook = (data) => {
   return new Promise(async (resolve, reject) => {
     if (data.txt != "") {
-      const resPerPage = 5;
+      const resPerPage = 6;
       const page = data.page || 1;
       const numOfItems = await Book.count({ name: { '$regex': data.txt } });
       if (numOfItems < resPerPage) {
