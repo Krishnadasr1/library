@@ -1,4 +1,3 @@
-const { PORT } = require("./helpers/config");
 const app = require("./index");
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -15,6 +14,6 @@ mongoose.connection.on("connected", (err, res) => {
   console.log("mongoose connected")
 })
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log("server started at",PORT);
+app.listen(process.env.PORT || 3000, () => {
+  console.log("server started at",process.env.PORT);
 });

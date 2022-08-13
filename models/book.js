@@ -1,29 +1,25 @@
 const mongoose = require('mongoose')
 
 const bookSchema = new mongoose.Schema({
-    
-    name: {
-        type: String,
-    required: true
-    },
-    biblioId: {
-        type: String,
-        required: true,
-        unique:true
-    },
-image:{
-    type:String
-},
-items:{
-    type:Array
-},
-unavailableItems:{
-    type:Array
-},
-category:{
-    type:String,
-    enum:["Novel","Story","Poem","Journals","AutoBiography","General"]
-},
+  bookTitle: String,
+  ISBN: String,
+  language: String,
+  publicationPlace: String,
+  publisherName: String,
+  publicatonDate: String,
+  author: String,
+  editor: String,
+  translator: String,
+  volume: String,
+  price: String,
+  pages: String,
+  edition: String,
+  classNo: String,
+  accessionNo: String,
+  callNo: String,
+  subjectHeading: String,
+  description: String,
+
 trends:{
     type:String,
     default:"0"
@@ -31,8 +27,13 @@ trends:{
 release:{
     type:String,
     default:"0"
+},
+image: String,
+hold:{
+  type:String,
+  default:"F"
 }
 },
 {timestamps:true})
 
-module.exports= mongoose.model('Book', bookSchema)
+module.exports = mongoose.model('Book', bookSchema)

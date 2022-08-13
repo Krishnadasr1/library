@@ -6,16 +6,14 @@ const app = express();
 app.use(bodyParser())
 app.use(cors())
 
-app.use('/koha/book',require('./routing/bookRoutes'))
-app.use('/koha/hold',require('./routing/holdRoutes'))
-app.use('/koha/checkout',require('./routing/checkoutRoutes'))
-app.use('/koha/patron',require('./routing/patronRoutes'))
-app.use('/koha/library',require('./routing/libraryRoutes'))
+app.use('/user',require('../controller/userController.js'))
+app.use('/admin',require('../controller/adminController'))
+// app.use('/dp',require('../controller/dpController'))
+// app.use('/member',require('../controller/memberController'))
 
-app.use('/user',require('./routing/userRoutes'))
-app.use('/admin',require('./routing/adminRoutes'))
-app.use('/boy',require('./routing/boyRoutes'))
-app.use('/member',require('./routing/memberRoutes'))
+// app.use('/library',require('../controller/libraryController'))
+ app.use('/books',require('../controller/bookController'))
+ app.use('/hold',require('../controller/holdController'))
 
 
 

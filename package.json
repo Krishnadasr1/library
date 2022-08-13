@@ -1,7 +1,7 @@
 {
-  "name": "Library-BackOffice-MS",
+  "name": "amc-backoffice",
   "version": "1.0.0",
-  "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,26 +9,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/priyanka_tst/koha-service.git"
+    "url": "git+ssh://git@gitlab.com/priyanka_tst/amc-backoffice.git"
   },
-  "author": "",
+  "author": "priyanka@techgentsia.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/priyanka_tst/koha-service/issues"
+    "url": "https://gitlab.com/priyanka_tst/amc-backoffice/issues"
   },
-  "homepage": "https://gitlab.com/priyanka_tst/koha-service#readme",
+  "homepage": "https://gitlab.com/priyanka_tst/amc-backoffice#readme",
   "dependencies": {
-    "aws-sdk": "^2.1155.0",
-    "axios": "^0.26.1",
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.0",
-    "express": "^4.17.3",
-    "mongodb": "^4.5.0",
-    "mongoose": "^6.3.0",
-    "multer": "^1.4.4",
-    "nodemon": "^2.0.15",
-    "qs": "^6.10.3"
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongodb": "^4.8.1",
+    "mongoose": "^6.5.1",
+    "nodemon": "^2.0.19"
   }
 }
