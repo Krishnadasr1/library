@@ -7,6 +7,6 @@ app.use(bodyParser())
 app.use(core())
 
 
-app.use('/api/v1/amc',require('./routes/routing'))
+app.use('api/v1/amc',require('./routes/routing'))
 
 module.exports = app
