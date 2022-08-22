@@ -14,6 +14,7 @@ const Delivery = require("../models/delivery");
 
 router.post("/register", async (req, res) => {
   const number = req.body.phoneNumber
+  console.log("register api called")
   User.find({ phoneNumber: number }).exec()
     .then(user => {
       if (user.length >= 1) {
