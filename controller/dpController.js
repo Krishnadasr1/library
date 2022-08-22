@@ -193,7 +193,7 @@ router.get("/get_all_return/:deliveryPersonId", (req, res) => {
       res.status(400).send(err)
     })
 })
-router.get("/conform_return/:id",(req,res) =>{
+router.get("/conform_return_by_dp/:id",(req,res) =>{
   Delivery.findoneAndUpdate({_id:req.params.id},{returnStatus:"Closed",userInHand:"F"})
   .then(resp =>{
     res.status(200).send("confirmed delivery")

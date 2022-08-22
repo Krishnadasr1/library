@@ -49,6 +49,10 @@ const deliverySchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    holdId:{
+        type:String,
+        required:true
+    },
     deliveryPerson:{
         type:String,
         required:true

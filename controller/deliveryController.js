@@ -8,7 +8,7 @@ const DP = require("../models/dp");
 
 
 
-router.post("place_checkout", (req,res) =>{
+router.post("/place_checkout", (req,res) =>{
     const data = req.body
      DP.find({ wardNumber: data.wardNumber })
     .then((user) => {
@@ -23,7 +23,12 @@ router.post("place_checkout", (req,res) =>{
         })
         delivery.save().then(resp => {
           Hold.findOneAndUpdate({accessionNo:data.accessionNo},{checkoutStatus:"T"})
-          res.status(200).send(resp);
+          .then(resp =>{
+            res.status(200).send(resp)
+          }).catch(err =>{
+            Delivery.findOneAndDelete({_id:delivery._id}).exec();
+            res.status(400).send(err)
+          })
         }).catch(err => {
           console.log(err)
           res.status(400).send(err)
@@ -33,7 +38,7 @@ router.post("place_checkout", (req,res) =>{
         res.status(400).send(err)
     })
 })
-router.get("get_all",(req,res) =>{
+router.get("/get_all",(req,res) =>{
     Delivery.find()
     .then((resp) => {
       res.status(200).send(resp);
@@ -42,7 +47,7 @@ router.get("get_all",(req,res) =>{
       res.status(400).send(err);
     })
 })
-router.get("get_by_delivery_person/:deliveryPersonId",(req,res) =>{
+router.get("/get_by_delivery_person/:deliveryPersonId",(req,res) =>{
     Delivery.find({deliveryPerson:req.params.deliveryPersonId})
     .then((resp) => {
       res.status(200).send(resp);
