@@ -17,7 +17,7 @@ router.post("/register", async (req, res) => {
             } else {
                 bcrypt.hash(req.body.password, 10, (err, hash) => {
                     if (err) {
-                        reject(err)
+                        res.status(400).send(err)
                     } else {
                         const user = Admin({
                             userName: req.body.userName,
@@ -31,6 +31,8 @@ router.post("/register", async (req, res) => {
                     }
                 })
             }
+        }).catch(err => {
+            res.status(400).send("something went wrong")
         })
 })
 
@@ -41,21 +43,28 @@ router.post("/login", async (req, res) => {
                 res.status(400).send({
                     message: "No User Exist"
                 })
+            } else {
+                bcrypt.compare(req.body.password, user[0].password, (err, resp) => {
+
+                    if (err) {
+                        res.status(401).send({
+                            message: "Authentication failed... Incorrect password"
+                        })
+                    }
+                    if (resp) {
+                        res.status(200).send({
+                            message: "success",
+                            user: user
+
+                        })
+                    } else {
+                        res.status(401).send({
+                            message: "Authentication failed"
+                        })
+                    }
+
+                })
             }
-            bcrypt.compare(req.body.password, user[0].password, (err, resp) => {
-
-                if (resp) {
-                    res.status(200).send({
-                        message: "success",
-                        //user: user
-
-                    })
-                } else {
-                    res.status(401).send({
-                        message: "Authentication failed"
-                    })
-                }
-            })
         }).catch(err => {
             console.log(err)
             res.status(500).send(err)

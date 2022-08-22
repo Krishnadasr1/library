@@ -32,6 +32,10 @@ image: String,
 hold:{
   type:String,
   default:"F"
+},
+checkout:{
+  type:String,
+  default:"F"
 }
 },
 {timestamps:true})

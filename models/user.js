@@ -20,8 +20,13 @@ const userSchema = new mongoose.Schema({
     },
     cardNumber: {
         type: String,
-        default:null
+        default:null,
+        unique:true
         //required: true
+    },
+    category:{
+        type:String,
+        enum:["A","B","C"]
     },
     password: {
         type: String,
@@ -45,7 +50,7 @@ const userSchema = new mongoose.Schema({
         default:"Alappuzha"
     },
   
-    pinCode: {
+    pincode: {
         type: String,
     },
     phoneNumber: {

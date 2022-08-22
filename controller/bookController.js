@@ -7,25 +7,29 @@ router.post("/search", async (req, res) => {
     if (text != "") {
         const resPerPage = 6;
         const page1 = page || 1;
-        const numOfItems = await Book.count({ bookTitle: { '$regex': text } });
+        const numOfItems = await Book.count({ bookTitle: { '$regex': `^`+text, '$options' : 'i' } });
         if (numOfItems < resPerPage) {
             // const txt = text
-            await Book.find({ bookTitle: { '$regex': text } })
+            await Book.find({ bookTitle: { '$regex':  `^`+text, '$options' : 'i' } })
                 .then((resp) => {
+                    console.log(resp)
                     res.status(200).send({
                         CurrentPage: 1,
                         TotalPages: 1,
-                        Search: data.txt,
+                        Search: text,
                         TotalBooks: numOfItems,
                         data: resp
                     })
                 }).catch((err) => {
+                    console.log(err)
                    res.status(500).send("Something went wrong")
                 })
         } else {
-            await Book.find({ bookTitle: { '$regex': text } })
+            //{'$regex' : '^string', '$options' : 'i'}
+            await Book.find({ bookTitle: { '$regex':  `^`+text, '$options' : 'i' } })
                 .skip((resPerPage * page1) - resPerPage)
                 .limit(resPerPage).then(async (resp) => {
+                    console.log(resp)
                     res.status(200).send({
                         CurrentPage: page1,
                         TotalPages: Math.ceil(numOfItems / resPerPage),
@@ -39,13 +43,13 @@ router.post("/search", async (req, res) => {
                 })
         }
     } else {
-        reject({
+        res.status(404).send({
             message: "Please enter a text"
         })
     }
 })
-router.post("/get_by_accessionNo", (req, res) =>{
-    Book.find({accessionNo: req.body.accessionNo})
+router.get("/get_by_accessionNo/:accessionNo", (req, res) =>{
+    Book.find({accessionNo: req.params.accessionNo})
     .then((resp) =>{
         res.status(200).send(resp)
     }).catch(err =>{
@@ -74,8 +78,8 @@ router.get("/get_release", async(req, res) =>{
 })
        
        
-router.post("/add_to_trends", (req, res) =>{
-    Book.find({accessionNo: req.body.accessionNo })
+router.post("/add_to_trends/:accessionNo", (req, res) =>{
+    Book.find({accessionNo: req.params.accessionNo })
     .then((book) =>{
         book[0].trends = "1"
         book[0].save();
@@ -84,24 +88,24 @@ router.post("/add_to_trends", (req, res) =>{
         res.status(500).send(err)
     })
 })
-router.post("/add_to_release", (req, res) =>{
-    Book.find({accessionNo: req.body.accessionNo })
+router.post("/add_to_release/:accessionNo", (req, res) =>{
+    Book.find({accessionNo: req.params.accessionNo })
     .then((book) =>{
         book[0].release = "1"
         book[0].save();
-        res.status(200).send("Book added to top trends")
+        res.status(200).send("Book added to new relase")
     }).catch(err =>{
         res.status(500).send(err)
     })
 })
-router.post("/check_availability/:number", (req, res) =>{
-    Book.find({accessionNo: req.params.number })
+router.post("/check_availability/:accessionNo", (req, res) =>{
+    Book.find({accessionNo: req.params.accessionNo })
     .then((book) =>{
         if(book.length<1){
-            res.status(400).send("Book Not found")   
+            res.status(404).send("Book Not found")   
         }else{
             if((book[0].hold=="T")||(book[0].checkout=="T")){
-                res.status(400).send("Book Not available")   
+                res.status(405).send("Book Not available")   
             }else{
                 res.status(200).send("Book available")
             }

@@ -10,8 +10,11 @@ const holdSchema = new mongoose.Schema({
    wardNumber: String,
    postOffice: String,
    pinCode: String,
-   phoneNumber: String 
-
+   phoneNumber: String,
+  checkoutStatus:{
+   type:String,
+   default:"F"
+  }
 }, { timestamps: true })
 
 module.exports= mongoose.model('Hold', holdSchema)
