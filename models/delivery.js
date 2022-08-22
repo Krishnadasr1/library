@@ -4,7 +4,7 @@ const deliverySchema = new mongoose.Schema({
     
     userName: {
         type: String,
-        //required: true
+        required: true
     },
     cardNumber: {
         type: String,
@@ -12,15 +12,19 @@ const deliverySchema = new mongoose.Schema({
     },
     houseName: {
         type: String,
+        required: true,
     },
     wardName: {
         type: String,
+        required: true,
     },
     wardNumber: {
         type: Number,
+        required: true,
     },
     postOffice: {
         type: String,
+        required: true,
     },
     district: {
         type: String,
@@ -30,6 +34,7 @@ const deliverySchema = new mongoose.Schema({
   
     pinCode: {
         type: String,
+        required: true,
     },
     phoneNumber: {
         type: String,
