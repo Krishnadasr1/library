@@ -59,8 +59,8 @@ router.get("/get_list",(req,res)=>{
         res.status(400).send(err)
     })
 })
-router.get("/get_list_by_user/:Number",(req,res)=>{
-    Hold.find({cardNumber:req.params.Number}).then(resp =>{
+router.get("/get_list_by_user/:cardNumber",(req,res)=>{
+    Hold.find({cardNumber:req.params.cardNumber}).then((resp) =>{
         res.status(200).send(resp)
     }).catch(err =>{
         res.status(400).send(err)
