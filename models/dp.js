@@ -4,7 +4,7 @@ const dpSchema = new mongoose.Schema({
     
     name: {
         type: String,
-        required: true,
+        //required: true,
 
     },
     address: {
@@ -18,7 +18,7 @@ const dpSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        //required: true
     },
     memberId: {
         type: String,
@@ -26,7 +26,7 @@ const dpSchema = new mongoose.Schema({
     },
     wardNumber: {
         type: Array,
-        required: true
+       // required: true
     },
     status: {
         type: String,

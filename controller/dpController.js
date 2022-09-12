@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
@@ -35,9 +36,11 @@ router.post("/register", async (req, res) => {
               user.save();
 
             }).catch((err) => {
+              console.log(err)
               res.status(500).send(err)
             })
         }).catch(err => {
+          console.log(err)
           res.status(500).send(err)
         })
       }
@@ -51,27 +54,30 @@ router.post("/login", (req, res) => {
       if (user.length < 1) {
         res.status(404).send("user not found")
       } else {
-
+//console.log(user[0])
         //user found , send otp 
         const otpreq = {
           method: 'get',
-          url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user.phoneNumber}/AUTOGEN3/AMC_login`,
-          headers: {
+          url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user[0].phoneNumber}/AUTOGEN2/AMC_login`,          headers: {
             Accept: 'application.json'
           }
         }
         axios(otpreq)
-          .then((resp) => {
+          .then(async(resp) => {
             //check if it works , if works flush it in 2 mints
-            user.otp = resp.data.OTP
-            user.save();
+           // console.log(resp.data)
+            user[0].otp = resp.data.OTP
+            user[0].save();
             console.log(resp.data.OTP)
             res.status(200).send("OTP sended")
           }).catch((err) => {
-            res.status(500).send(err)
+            console.log(err)
+            res.status(400).send(err)
           })
 
       }
+    }).catch(err =>{
+      res.status(400).send(err)
     })
 });
 router.post("/verify_otp", (req, res) => {
@@ -105,7 +111,7 @@ router.post("/application_form_filling", async (req, res) => {
       //console.log(user)
       DP.findOneAndUpdate({ phoneNumber: data.phoneNumber }, data)
         .then((resp) => {
-          res.status(200).send("user updated")
+          res.status(200).send("application form submitted")
         }).catch((err) => {
           res.status(400).send("something went wrong")
         })
@@ -128,7 +134,7 @@ router.post("/approve_delivery_person", (req, res) => {
   const { data } = req.body
   DP.findOneAndUpdate({ phoneNumber: req.body.phoneNumber }, { status: "T" })
     .then((resp) => {
-      res.status(200).send(resp)
+      res.status(200).send("Approved the delivery person")
     })
     .catch((err) => {
       res.status(400).send(err)
@@ -163,7 +169,7 @@ router.post("/delete/:phoneNumber", (req, res) => {
     });
 })
 
-router.get("/get_all_delivery/:deliverPersonId", (req, res) => {
+router.get("/get_all_delivery_by_person/:deliverPersonId", (req, res) => {
   Delivery.find({
     $and: [{ deliveryPerson: req.params.deliverPersonId },
     { checkoutStatus: "Open" }]
@@ -174,7 +180,7 @@ router.get("/get_all_delivery/:deliverPersonId", (req, res) => {
       res.status(400).send(err)
     })
 })
-router.get("/conform_delivery/:id",(req,res) =>{
+router.get("/conform_delivery/:deliveryId",(req,res) =>{
 Delivery.findoneAndUpdate({_id:req.params.id},{checkoutStatus:"Closed",userInHand:"T"})
 .then(resp =>{
   res.status(200).send("confirmed delivery")
