@@ -58,7 +58,8 @@ router.post("/login", (req, res) => {
       if (user.length < 1) {
         res.status(404).send("user not found")
       } else {
-        if (user.phoneNumber) {
+        //console.log(user[0])
+        if (user[0].phoneNumber!=null) {
           //user found , send otp 
           const otpreq = {
             method: 'get',
@@ -70,11 +71,12 @@ router.post("/login", (req, res) => {
           axios(otpreq)
             .then((resp) => {
               //check if it works , if works flush it in 2 mints
-              user.otp = resp.data.OTP
-              user.save();
+              user[0].otp = resp.data.OTP
+              user[0].save();
               console.log(resp.data.OTP)
               res.status(200).send("OTP sended")
             }).catch((err) => {
+              console.log(err)
               res.status(400).send(err)
             })
         } else {
@@ -117,7 +119,7 @@ User.find({phoneNumber: data.phoneNumber}).then((user) =>{
     })
   }
 }).catch((err) =>{
-  res.status(400).send(err)
+  res.status(404).send(err)
 })
 })
 router.get("/get_by_cardNumber/:number", (req,res) =>{
