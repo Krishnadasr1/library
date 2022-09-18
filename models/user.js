@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     category:{
         type:String,
-        enum:["A","B","C"]
+       // enum:["A","B","C"]
     },
     password: {
         type: String,
