@@ -63,7 +63,7 @@ router.post("/login", (req, res) => {
           //user found , send otp 
           const otpreq = {
             method: 'get',
-            url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user.phoneNumber}/AUTOGEN3/AMC_login`,
+            url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user[0].phoneNumber}/AUTOGEN2/AMC_login`,
             headers: {
               Accept: 'application.json'
             }
