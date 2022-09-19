@@ -8,8 +8,7 @@ const bookSchema = new mongoose.Schema({
   publisherName: String,
   publicatonDate: String,
   author: String,
-  editor: String,
-  translator: String,
+  editorOrTranslator:String,
   volume: String,
   price: String,
   pages: String,
@@ -19,6 +18,7 @@ const bookSchema = new mongoose.Schema({
   callNo: String,
   subjectHeading: String,
   description: String,
+  category:String,
 
 trends:{
     type:String,
