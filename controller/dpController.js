@@ -22,7 +22,7 @@ router.post("/register", async (req, res) => {
         user.save().then(resp => {
           const otpreq = {
             method: 'get',
-            url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user.phoneNumber}/AUTOGEN2/AMC_login`,
+            url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2/AMC_login`,
             headers: {
               Accept: 'application.json'
             }
@@ -58,7 +58,7 @@ router.post("/login", (req, res) => {
         //user found , send otp 
         const otpreq = {
           method: 'get',
-          url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user[0].phoneNumber}/AUTOGEN2/AMC_login`,          headers: {
+          url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2/AMC_login`,          headers: {
             Accept: 'application.json'
           }
         }
@@ -169,9 +169,9 @@ router.post("/delete/:phoneNumber", (req, res) => {
     });
 })
 
-router.get("/get_all_delivery_by_person/:deliverPersonId", (req, res) => {
+router.get("/get_all_delivery_by_person/:deliverPerson_Id", (req, res) => {
   Delivery.find({
-    $and: [{ deliveryPerson: req.params.deliverPersonId },
+    $and: [{ deliveryPerson: req.params.deliverPerson_Id },
     { checkoutStatus: "Open" }]
   })
     .then(resp => {
@@ -180,17 +180,17 @@ router.get("/get_all_delivery_by_person/:deliverPersonId", (req, res) => {
       res.status(400).send(err)
     })
 })
-router.get("/conform_delivery/:deliveryId",(req,res) =>{
-Delivery.findoneAndUpdate({_id:req.params.id},{checkoutStatus:"Closed",userInHand:"T"})
+router.get("/conform_delivery/:checkout_Id",(req,res) =>{
+Delivery.findoneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"Closed",userInHand:"T"})
 .then(resp =>{
   res.status(200).send("confirmed delivery")
 }).catch(err =>{
   res.status(400).send(err)
 })
 })
-router.get("/get_all_return/:deliveryPersonId", (req, res) => {
+router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
   Delivery.find({
-    $and:[{deliveryPerson: req.params.deliveryPersonId},
+    $and:[{deliveryPerson: req.params.deliveryPerson_Id},
     {returnStatus:"Open"}]
   })
     .then(resp => {
@@ -199,8 +199,8 @@ router.get("/get_all_return/:deliveryPersonId", (req, res) => {
       res.status(400).send(err)
     })
 })
-router.get("/conform_return_by_dp/:id",(req,res) =>{
-  Delivery.findoneAndUpdate({_id:req.params.id},{returnStatus:"Closed",userInHand:"F"})
+router.get("/conform_return_from_deliveryPerson/:checkout_Id",(req,res) =>{
+  Delivery.findoneAndUpdate({_id:req.checkout_Id},{returnStatus:"Closed",userInHand:"F"})
   .then(resp =>{
     res.status(200).send("confirmed delivery")
   }).catch(err =>{

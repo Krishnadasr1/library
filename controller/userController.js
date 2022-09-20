@@ -15,8 +15,8 @@ const Delivery = require("../models/delivery");
 router.post("/register", async (req, res) => {
   const number = req.body.phoneNumber
   console.log("register api called")
-  User.find({ phoneNumber: number }).exec()
-    .then(user => {
+ User.find({ phoneNumber: number }).exec()
+   .then(user => {
       if (user.length >= 1) {
         res.status(405).send("User Exist.Try another phone number")
       } else {
@@ -27,19 +27,22 @@ router.post("/register", async (req, res) => {
         user.save().then(resp => {
           const otpreq = {
             method: 'get',
-            url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user.phoneNumber}/AUTOGEN2/AMC_login`,
+            url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2/AMC_login`,
             headers: {
               Accept: 'application.json'
             }
           }
           axios(otpreq)
             .then(async (resp1) => {
-              res.status(201).send("User created.OTP sended")
-              console.log(resp1.data.OTP)
+              console.log(resp1.data.Status)
+              if(resp1.data.Status=="Error"){
+                res.status(200).send({"Success":"User created.","Error":"OTP service stopped temporarily due to insufficient balance."})
+              }else{
+              res.status(201).send({"Success":"User created.","OTP_Success":"OTP sended"})
               //check if it works , if works flush it in 2 mints
               user.otp = resp1.data.OTP
               user.save();
-
+            }
             }).catch((err) => {
               res.status(400).send(err)
             })
@@ -63,7 +66,7 @@ router.post("/login", (req, res) => {
           //user found , send otp 
           const otpreq = {
             method: 'get',
-            url: `${process.env.twoFactorUrl}/${process.env.twoFactorApiKey}/SMS/${user[0].phoneNumber}/AUTOGEN2/AMC_login`,
+            url: `${process.env.TWOFACTOR_URL}/${process.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2/AMC_login`,
             headers: {
               Accept: 'application.json'
             }

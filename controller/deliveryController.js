@@ -47,8 +47,8 @@ router.get("/get_all",(req,res) =>{
       res.status(400).send(err);
     })
 })
-router.get("/get_by_delivery_person/:deliveryPersonId",(req,res) =>{
-    Delivery.find({deliveryPerson:req.params.deliveryPersonId})
+router.get("/get_by_delivery_person/:deliveryPerson_Id",(req,res) =>{
+    Delivery.find({deliveryPerson:req.params.deliveryPerson_Id})
     .then((resp) => {
       res.status(200).send(resp);
     }).catch((err) => {

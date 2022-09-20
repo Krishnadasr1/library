@@ -46,7 +46,7 @@ const deliverySchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    accessioNo:{
+    accessionNo:{
         type:String,
         required:true
     },
