@@ -25,6 +25,7 @@ router.post("/register", async (req, res) => {
           phoneNumber: number
         })
         user.save().then(resp => {
+          console.log(".........registering new user.....")
           const otpreq = {
             method: 'get',
             url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2`,

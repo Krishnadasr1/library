@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     cardNumber: {
         type: String,
         default:null,
-        unique:true
+        //unique:true
         //required: true
     },
     category:{
