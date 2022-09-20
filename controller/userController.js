@@ -38,7 +38,7 @@ router.post("/register", async (req, res) => {
               if(resp1.data.Status=="Error"){
                 res.status(200).send({"Success":"User created.","Error":"OTP service stopped temporarily due to insufficient balance."})
               }else{
-              res.status(201).send({"Success":"User created.","OTP_Success":"OTP sended"})
+              res.status(201).send({"Success":"User created.OTP sended"})
               //check if it works , if works flush it in 2 mints
               user.otp = resp1.data.OTP
               user.save();
