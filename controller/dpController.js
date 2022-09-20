@@ -22,7 +22,7 @@ router.post("/register", async (req, res) => {
         user.save().then(resp => {
           const otpreq = {
             method: 'get',
-            url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2/AMC_login`,
+            url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2`,
             headers: {
               Accept: 'application.json'
             }
@@ -58,7 +58,7 @@ router.post("/login", (req, res) => {
         //user found , send otp 
         const otpreq = {
           method: 'get',
-          url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2/AMC_login`,          headers: {
+          url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2`,          headers: {
             Accept: 'application.json'
           }
         }
