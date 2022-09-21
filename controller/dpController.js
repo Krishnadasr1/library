@@ -181,7 +181,7 @@ router.get("/get_all_delivery_by_person/:deliverPerson_Id", (req, res) => {
     })
 })
 router.get("/conform_delivery/:checkout_Id",(req,res) =>{
-Delivery.findoneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"Closed",userInHand:"T"})
+Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"Closed",userInHand:"T"})
 .then(resp =>{
   res.status(200).send("confirmed delivery")
 }).catch(err =>{
@@ -200,7 +200,7 @@ router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
     })
 })
 router.get("/conform_return_from_deliveryPerson/:checkout_Id",(req,res) =>{
-  Delivery.findoneAndUpdate({_id:req.checkout_Id},{returnStatus:"Closed",userInHand:"F"})
+  Delivery.findOneAndUpdate({_id:req.checkout_Id},{returnStatus:"Closed",userInHand:"F"})
   .then(resp =>{
     res.status(200).send("confirmed delivery")
   }).catch(err =>{
