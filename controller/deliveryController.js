@@ -8,39 +8,52 @@ const Book = require("../models/book");
 
 
 
-router.post("/place_checkout", (req,res) =>{
-    const data = req.body
-     DP.find({ wardNumber: data.wardNumber })
+router.post("/place_checkout", (req, res) => {
+  const data = req.body
+  DP.find({ wardNumber: data.wardNumber })
     .then((user) => {
       if (user.length < 1) {
         res.status(401).send({
           message: "No Delivery Person in the Ward"
         })
       } else {
-        const delivery = Delivery({
-          ...data,
-          deliveryPerson:user[0]._id
-        })
-        delivery.save().then(resp => {
-          Hold.findOneAndUpdate({accessionNo:data.accessionNo},{checkoutStatus:"T"})
-          .then(resp =>{
-            Book.findOneAndUpdate({accessionNo:data.accessionNo},{hold:"F"})
-            res.status(200).send(resp)
-          }).catch(err =>{
-            Delivery.findOneAndDelete({_id:delivery._id}).exec();
-            res.status(400).send(err)
+
+        Delivery.find({ holdId: data.holdId }).exec()
+          .then(delivery => {
+            if (delivery.length >= 1) {
+              res.status(400).send({
+                message: "checkout already exist",
+                data: JSON.stringify(delivery)
+              })
+            } else {
+              const delivery = Delivery({
+                ...data,
+                deliveryPerson: user[0]._id
+              })
+              delivery.save().then(resp => {
+                Hold.findOneAndUpdate({ accessionNo: data.accessionNo }, { checkoutStatus: "T" })
+                  .then(resp => {
+                    Book.findOneAndUpdate({ accessionNo: data.accessionNo }, { hold: "F" })
+                    res.status(200).send(resp)
+                  }).catch(err => {
+                    Delivery.findOneAndDelete({ _id: delivery._id }).exec();
+                    res.status(400).send(err)
+                  })
+              }).catch(err => {
+                console.log(err)
+                res.status(400).send(err)
+              })
+            }
+          }).catch(err => {
+            res.status(400).send("something went wrong")
           })
-        }).catch(err => {
-          console.log(err)
-          res.status(400).send(err)
-        })
       }
-    }).catch(err =>{
-        res.status(400).send(err)
+    }).catch(err => {
+      res.status(400).send(err)
     })
 })
-router.get("/get_all",(req,res) =>{
-    Delivery.find()
+router.get("/get_all", (req, res) => {
+  Delivery.find()
     .then((resp) => {
       res.status(200).send(resp);
     }).catch((err) => {
@@ -48,8 +61,8 @@ router.get("/get_all",(req,res) =>{
       res.status(400).send(err);
     })
 })
-router.get("/get_by_delivery_person/:deliveryPerson_Id",(req,res) =>{
-    Delivery.find({deliveryPerson:req.params.deliveryPerson_Id})
+router.get("/get_by_delivery_person/:deliveryPerson_Id", (req, res) => {
+  Delivery.find({ deliveryPerson: req.params.deliveryPerson_Id })
     .then((resp) => {
       res.status(200).send(resp);
     }).catch((err) => {
