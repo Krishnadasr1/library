@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const Delivery = require("../models/delivery");
 const Hold = require("../models/hold");
 const DP = require("../models/dp");
+const Book = require("../models/book");
 
 
 
@@ -24,6 +24,7 @@ router.post("/place_checkout", (req,res) =>{
         delivery.save().then(resp => {
           Hold.findOneAndUpdate({accessionNo:data.accessionNo},{checkoutStatus:"T"})
           .then(resp =>{
+            Book.findOneAndUpdate({accessionNo:data.accessionNo},{hold:"F"})
             res.status(200).send(resp)
           }).catch(err =>{
             Delivery.findOneAndDelete({_id:delivery._id}).exec();

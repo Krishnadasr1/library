@@ -199,10 +199,11 @@ router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
       res.status(400).send(err)
     })
 })
-router.get("/conform_return_from_deliveryPerson/:checkout_Id",(req,res) =>{
-  Delivery.findOneAndUpdate({_id:req.checkout_Id},{returnStatus:"Closed",userInHand:"F"})
+router.get("/conform_return_by_deliveryPerson/:checkout_Id",(req,res) =>{
+  Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{returnStatus:"Closed",userInHand:"F"})
   .then(resp =>{
-    res.status(200).send("confirmed delivery")
+    console.log(resp)
+    res.status(200).send("return confirmed")
   }).catch(err =>{
     res.status(400).send(err)
   })

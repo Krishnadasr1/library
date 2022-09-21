@@ -3,6 +3,10 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const Admin = require("../models/admin");
+const Delivery = require("../models/delivery");
+const Book = require("../models/book");
+
+
 
 
 router.post("/register", async (req, res) => {
@@ -70,6 +74,17 @@ router.post("/login", async (req, res) => {
             res.status(500).send(err)
         })
 })
+router.get("/conform_return_by_admin/:checkout_Id",(req,res) =>{
+    Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"Closed",returnStatus:"N"})
+    .then(resp =>{
+        //console.log(resp.accessioNo)
+        Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F"})
+      res.status(200).send("return confirmed")
+    }).catch(err =>{
+        console.log(err)
+      res.status(400).send(err)
+    })
+    })
 
 
 module.exports = router;
