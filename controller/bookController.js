@@ -122,15 +122,34 @@ router.post("/check_availability/:accessionNo", (req, res) => {
             res.status(500).send(err)
         })
 })
-router.get("/books_in_users_hand",(req,res) =>{
-    Delivery.find({userInHand:"T"})
-    .then(resp =>{
-      res.status(200).send(resp)
-    }).catch(err =>{
-        console.log(err)
-      res.status(400).send(err)
-    })
-    })
+router.get("/books_in_users_hand", (req, res) => {
+    Delivery.find({ userInHand: "T" })
+        .then(resp => {
+            res.status(200).send(resp)
+        }).catch(err => {
+            console.log(err)
+            res.status(400).send(err)
+        })
+})
+router.get("/get_all_category", (req, res) => {
+    Book.distinct('subjectHeading')
+        //console.log(book)
+        .then((resp) => {
+            res.status(200).send(resp)
+        }).catch(err => {
+            res.status(500).send(err)
+        })
+})
+router.get("/list_by_category/:category", (req, res) => {
+    Book.find({ subjectHeading: req.params.category })
+        //console.log(book)
+        .then((resp) => {
+            res.status(200).send(resp)
+
+        }).catch(err => {
+            res.status(500).send(err)
+        })
+})
 module.exports = router;
 
 
