@@ -5,6 +5,10 @@ const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const DP = require("../models/dp");
 const Delivery = require("../models/delivery");
+const Book = require("../models/book");
+const Hold = require("../models/hold");
+
+
 
 
 
@@ -69,7 +73,7 @@ router.post("/login", (req, res) => {
             user[0].otp = resp.data.OTP
             user[0].save();
             console.log(resp.data.OTP)
-            res.status(200).send("OTP sended")
+            res.status(200).send({"message":"OTP sended","user":user[0]})
           }).catch((err) => {
             console.log(err)
             res.status(400).send(err)
@@ -132,7 +136,7 @@ router.get("/get_delivery_person_applications", (req, res) => {
 })
 router.post("/approve_delivery_person", (req, res) => {
   const { data } = req.body
-  DP.findOneAndUpdate({ phoneNumber: req.body.phoneNumber }, { status: "T" })
+  DP.findOneAndUpdate({ phoneNumber: req.body.phoneNumber }, { wardNumber:req.body.wardNumber,status: "T" })
     .then((resp) => {
       res.status(200).send("Approved the delivery person")
     })
@@ -172,7 +176,7 @@ router.post("/delete/:phoneNumber", (req, res) => {
 router.get("/get_all_delivery_by_person/:deliverPerson_Id", (req, res) => {
   Delivery.find({
     $and: [{ deliveryPerson: req.params.deliverPerson_Id },
-    { checkoutStatus: "Open" }]
+    { checkoutStatus: "T" }]
   })
     .then(resp => {
       res.status(200).send(resp)
@@ -181,17 +185,20 @@ router.get("/get_all_delivery_by_person/:deliverPerson_Id", (req, res) => {
     })
 })
 router.get("/conform_delivery/:checkout_Id",(req,res) =>{
-Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"Closed",userInHand:"T"})
+Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{userInHand:"T"})
 .then(resp =>{
+  Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F"}).exec()
+  Hold.findOneAndUpdate({_id:resp.holdId},{holdStatus:"F"}).exec()
   res.status(200).send("confirmed delivery")
 }).catch(err =>{
+  console.log(err)
   res.status(400).send(err)
 })
 })
 router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
   Delivery.find({
     $and:[{deliveryPerson: req.params.deliveryPerson_Id},
-    {returnStatus:"Open"}]
+    {checkinStatus:"T"}]
   })
     .then(resp => {
       res.status(200).send(resp)
@@ -199,9 +206,11 @@ router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
       res.status(400).send(err)
     })
 })
-router.get("/conform_return_by_deliveryPerson/:checkout_Id",(req,res) =>{
-  Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{returnStatus:"Closed",userInHand:"F"})
+router.get("/conform_return_deliveryPerson/:checkout_Id",(req,res) =>{
+  Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkinStatus:"F",userInHand:"F",checkoutStatus:"F"})
   .then(resp =>{
+    Hold.findOneAndUpdate({_id:resp.holdId},{checkoutStatus:"F"}).exec()
+    Book.findOneAndUpdate({accessionNo:resp.accessionNo},{checkout:"F"}).exec()
     console.log(resp)
     res.status(200).send("return confirmed")
   }).catch(err =>{

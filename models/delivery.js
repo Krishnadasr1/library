@@ -65,7 +65,7 @@ const deliverySchema = new mongoose.Schema({
     checkoutStatus: {
         type: String,
     required: true,
-    default:"Open"
+    default:"T"
     //open when admin places a checkout
     //closed when delivery boy deliver the book
     },
@@ -73,10 +73,10 @@ const deliverySchema = new mongoose.Schema({
         type:String,
         default:"F"
     },
-    returnStatus: {
+    checkinStatus: {
         type: String,
     required: true,
-    default:"N"
+    default:"F"
     //N by default
     //open when user places a return
     //closed when delivery boy return the book to library

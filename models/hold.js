@@ -14,7 +14,12 @@ const holdSchema = new mongoose.Schema({
   checkoutStatus:{
    type:String,
    default:"F"
+  },
+  holdStatus:{
+    type:String,
+    default:"T"
   }
+   
 }, { timestamps: true })
 
 module.exports= mongoose.model('Hold', holdSchema)

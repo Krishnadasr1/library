@@ -33,7 +33,7 @@ router.post("/place_checkout", (req, res) => {
               delivery.save().then(resp => {
                 Hold.findOneAndUpdate({ accessionNo: data.accessionNo }, { checkoutStatus: "T" })
                   .then(resp => {
-                    Book.findOneAndUpdate({ accessionNo: data.accessionNo }, { hold: "F" })
+                    Book.findOneAndUpdate({ accessionNo: data.accessionNo }, { checkout: "T" }).exec()
                     res.status(200).send(resp)
                   }).catch(err => {
                     Delivery.findOneAndDelete({ _id: delivery._id }).exec();
@@ -53,7 +53,7 @@ router.post("/place_checkout", (req, res) => {
     })
 })
 router.get("/get_all", (req, res) => {
-  Delivery.find()
+  Delivery.find({ checkoutStatus: "T" })
     .then((resp) => {
       res.status(200).send(resp);
     }).catch((err) => {
@@ -62,7 +62,10 @@ router.get("/get_all", (req, res) => {
     })
 })
 router.get("/get_by_delivery_person/:deliveryPerson_Id", (req, res) => {
-  Delivery.find({ deliveryPerson: req.params.deliveryPerson_Id })
+  Delivery.find({
+    $and: [{ deliveryPerson: req.params.deliveryPerson_Id },
+    { checkoutStatus: "T" }]
+  })
     .then((resp) => {
       res.status(200).send(resp);
     }).catch((err) => {

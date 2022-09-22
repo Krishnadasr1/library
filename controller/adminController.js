@@ -75,16 +75,17 @@ router.post("/login", async (req, res) => {
         })
 })
 router.get("/conform_return_by_admin/:checkout_Id",(req,res) =>{
-    Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"Closed",returnStatus:"N"})
+    Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"F"})
     .then(resp =>{
         //console.log(resp.accessioNo)
-        Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F"})
+        Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F",checkout:"F"})
       res.status(200).send("return confirmed")
     }).catch(err =>{
         console.log(err)
       res.status(400).send(err)
     })
     })
+  
 
 
 module.exports = router;

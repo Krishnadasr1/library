@@ -209,8 +209,8 @@ router.post("/update", (req, res) => {
     })
 
 })
-router.get("/place_return/:id", (req, res) => {
-  Delivery.findOneAndUpdate({ _id: req.params.id }, { returnStatus: "Open" })
+router.get("/place_return/:checkout_Id", (req, res) => {
+  Delivery.findOneAndUpdate({ _id: req.params.checkout_Id }, { checkinStatus: "T" })
     .then(resp => {
       res.status(200).send(resp)
     }).catch(err => {
