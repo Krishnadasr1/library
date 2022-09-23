@@ -39,7 +39,6 @@ const deliverySchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
         required: true,
-        unique:true,
         match: /^\d{10}$/
     },
     bookName:{
@@ -70,6 +69,10 @@ const deliverySchema = new mongoose.Schema({
     //closed when delivery boy deliver the book
     },
     userInHand:{
+        type:String,
+        default:"F"
+    },
+    dpInHand:{
         type:String,
         default:"F"
     },

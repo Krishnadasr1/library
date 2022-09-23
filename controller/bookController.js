@@ -1,4 +1,5 @@
 const Book = require("../models/book");
+const Delivery = require("../models/delivery");
 const express = require("express");
 const router = express.Router();
 
@@ -98,6 +99,18 @@ router.post("/add_to_trends/:accessionNo", (req, res) => {
             res.status(500).send(err)
         })
 })
+router.post("/remove_from_trends/:accessionNo", (req, res) => {
+    console.log("<........remove from trends........>")
+    Book.find({ accessionNo: req.params.accessionNo })
+        .then((book) => {
+            book[0].trends = "0"
+            book[0].save();
+            res.status(200).send("Book removed from top trends")
+        }).catch(err => {
+            console.log("<........error........>"+err)
+            res.status(500).send(err)
+        })
+})
 router.post("/add_to_release/:accessionNo", (req, res) => {
     console.log("<........add to new releasae........>")
     Book.find({ accessionNo: req.params.accessionNo })
@@ -105,6 +118,18 @@ router.post("/add_to_release/:accessionNo", (req, res) => {
             book[0].release = "1"
             book[0].save();
             res.status(200).send("Book added to new relase")
+        }).catch(err => {
+            console.log("<........error........>"+err)
+            res.status(500).send(err)
+        })
+})
+router.post("/remove_from_release/:accessionNo", (req, res) => {
+    console.log("<........remove from new releasae........>")
+    Book.find({ accessionNo: req.params.accessionNo })
+        .then((book) => {
+            book[0].release = "0"
+            book[0].save();
+            res.status(200).send("Book removed from new relase")
         }).catch(err => {
             console.log("<........error........>"+err)
             res.status(500).send(err)
@@ -131,6 +156,16 @@ router.post("/check_availability/:accessionNo", (req, res) => {
 router.get("/books_in_users_hand", (req, res) => {
     console.log("<........books in users hand........>")
     Delivery.find({ userInHand: "T" })
+        .then(resp => {
+            res.status(200).send(resp)
+        }).catch(err => {
+            console.log("<........error........>"+err)
+            res.status(400).send(err)
+        })
+})
+router.get("/books_in_dp_hand", (req, res) => {
+    console.log("<........books in users hand........>")
+    Delivery.find({ dpInHand: "T" })
         .then(resp => {
             res.status(200).send(resp)
         }).catch(err => {

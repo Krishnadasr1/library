@@ -81,7 +81,7 @@ router.post("/login", async (req, res) => {
 })
 router.get("/conform_return_by_admin/:checkout_Id",(req,res) =>{
     console.log("<........Conform delivery by admin........>")
-    Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"F"})
+    Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkinStatus:"F",dpInHand:"F"})
     .then(resp =>{
         Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F",checkout:"F"})
       res.status(200).send("return confirmed")
@@ -90,6 +90,17 @@ router.get("/conform_return_by_admin/:checkout_Id",(req,res) =>{
         res.status(400).send(err)
     })
     })
+    router.get("/get_all_return", (req, res) => {
+        console.log("<........get all return by admin........>")
+        Delivery.find({checkinStatus:"T"})
+          .then(resp => {
+            res.status(200).send(resp)
+          }).catch(err => {
+            console.log("<........error........>"+err)
+            res.status(400).send(err)
+          })
+      })
+      
   
 
 

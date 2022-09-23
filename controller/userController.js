@@ -229,13 +229,25 @@ router.get("/place_return/:checkout_Id", (req, res) => {
   console.log("<........place return:{}........>"+req.params.checkout_Id)
   Delivery.findOneAndUpdate({ _id: req.params.checkout_Id }, { checkinStatus: "T" })
     .then(resp => {
+      res.status(200).send("return placed")
+    }).catch(err => {
+      console.log("<........error........>"+err)
+      res.status(400).send(err)
+    })
+})
+router.get("/past_read_books/:cardNumber", (req, res) => {
+  console.log("<........past read books user........>")
+  Delivery.find({
+    $and:[{cardNumber: req.params.cardNumber},
+    {userInHand:"F"}]
+  })
+    .then(resp => {
       res.status(200).send(resp)
     }).catch(err => {
       console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 })
-
 // router.post("/delete/:cardNumber", (req,res) =>{
 //   User.find({ cardNumber: req.params.cardNumber},)
 //   .then(async(user) => {

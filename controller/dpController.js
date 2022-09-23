@@ -206,8 +206,8 @@ router.get("/conform_delivery/:checkout_Id",(req,res) =>{
 Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{userInHand:"T"})
 .then(resp =>{
   Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F"}).exec()
-  Hold.findOneAndUpdate({_id:resp.holdId},{holdStatus:"F"}).exec()
-  res.status(200).send("confirmed delivery")
+  Hold.findOneAndDelete({_id:resp.holdId}).exec()
+  res.status(200).send("delivery conformed")
 }).catch(err =>{
   console.log("<........error........>"+err)
   res.status(400).send(err)
@@ -228,16 +228,28 @@ router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
 })
 router.get("/conform_return_deliveryPerson/:checkout_Id",(req,res) =>{
   console.log("<........conform return by delivery person........>")
-  Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkinStatus:"F",userInHand:"F",checkoutStatus:"F"})
+  Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{userInHand:"F",checkoutStatus:"F",dpInHand:"T"})
   .then(resp =>{
-    Hold.findOneAndUpdate({_id:resp.holdId},{checkoutStatus:"F"}).exec()
-    Book.findOneAndUpdate({accessionNo:resp.accessionNo},{checkout:"F"}).exec()
+   // Book.findOneAndUpdate({accessionNo:resp.accessionNo},{checkout:"F"}).exec()
    // console.log(resp)
     res.status(200).send("return confirmed")
   }).catch(err =>{
     console.log("<........error........>"+err)
     res.status(400).send(err)
   })
+  })
+  router.get("/past_orders/:deliveryPerson_Id", (req, res) => {
+    console.log("<........past orders by delivery person........>")
+    Delivery.find({
+      $and:[{deliveryPerson: req.params.deliveryPerson_Id},
+      {checkinStatus:"F"}]
+    })
+      .then(resp => {
+        res.status(200).send(resp)
+      }).catch(err => {
+        console.log("<........error........>"+err)
+        res.status(400).send(err)
+      })
   })
 
 module.exports = router;
