@@ -10,7 +10,7 @@ const Book = require("../models/book");
 
 
 router.post("/register", async (req, res) => {
-
+console.log("<........register admin........>")
     Admin.find({ userName: req.body.userName }).exec()
         .then(user => {
             if (user.length >= 1) {
@@ -21,6 +21,7 @@ router.post("/register", async (req, res) => {
             } else {
                 bcrypt.hash(req.body.password, 10, (err, hash) => {
                     if (err) {
+                        console.log("<........error........>"+err)
                         res.status(400).send(err)
                     } else {
                         const user = Admin({
@@ -30,17 +31,20 @@ router.post("/register", async (req, res) => {
                         user.save().then(resp => {
                             res.status(201).send("Admin created")
                         }).catch(err => {
+                            console.log("<........error........>"+err)
                             res.status(500).send("Something went wronng")
                         })
                     }
                 })
             }
         }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(400).send("something went wrong")
         })
 })
 
 router.post("/login", async (req, res) => {
+    console.log("<........login admin........>")
     Admin.find({ userName: req.body.userName }).exec()
         .then(user => {
             if (user.length < 1) {
@@ -51,6 +55,7 @@ router.post("/login", async (req, res) => {
                 bcrypt.compare(req.body.password, user[0].password, (err, resp) => {
 
                     if (err) {
+                        console.log("<........error........>"+err)
                         res.status(401).send({
                             message: "Authentication failed... Incorrect password"
                         })
@@ -70,19 +75,19 @@ router.post("/login", async (req, res) => {
                 })
             }
         }).catch(err => {
-            console.log(err)
+            console.log("<........error........>"+err)
             res.status(500).send(err)
         })
 })
 router.get("/conform_return_by_admin/:checkout_Id",(req,res) =>{
+    console.log("<........Conform delivery by admin........>")
     Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkoutStatus:"F"})
     .then(resp =>{
-        //console.log(resp.accessioNo)
         Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F",checkout:"F"})
       res.status(200).send("return confirmed")
     }).catch(err =>{
-        console.log(err)
-      res.status(400).send(err)
+        console.log("<........error........>"+err)
+        res.status(400).send(err)
     })
     })
   

@@ -9,6 +9,7 @@ const Book = require("../models/book");
 
 
 router.post("/place_checkout", (req, res) => {
+  console.log("<........place checkout........>")
   const data = req.body
   DP.find({ wardNumber: data.wardNumber })
     .then((user) => {
@@ -36,32 +37,37 @@ router.post("/place_checkout", (req, res) => {
                     Book.findOneAndUpdate({ accessionNo: data.accessionNo }, { checkout: "T" }).exec()
                     res.status(200).send(resp)
                   }).catch(err => {
+                    console.log("<........error........>"+err)
                     Delivery.findOneAndDelete({ _id: delivery._id }).exec();
                     res.status(400).send(err)
                   })
               }).catch(err => {
-                console.log(err)
+                console.log("<........error........>"+err)
                 res.status(400).send(err)
               })
             }
           }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(400).send("something went wrong")
           })
       }
     }).catch(err => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 })
 router.get("/get_all", (req, res) => {
+  console.log("<........get all checkouts........>")
   Delivery.find({ checkoutStatus: "T" })
     .then((resp) => {
       res.status(200).send(resp);
     }).catch((err) => {
-      console.log(err);
+      console.log("<........error........>"+err)
       res.status(400).send(err);
     })
 })
 router.get("/get_by_delivery_person/:deliveryPerson_Id", (req, res) => {
+  console.log("<........get checkouts by delivery person(delivery controller)........>")
   Delivery.find({
     $and: [{ deliveryPerson: req.params.deliveryPerson_Id },
     { checkoutStatus: "T" }]
@@ -69,7 +75,7 @@ router.get("/get_by_delivery_person/:deliveryPerson_Id", (req, res) => {
     .then((resp) => {
       res.status(200).send(resp);
     }).catch((err) => {
-      console.log(err);
+      console.log("<........error........>"+err)
       res.status(400).send(err);
     })
 })

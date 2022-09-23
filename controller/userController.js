@@ -13,6 +13,7 @@ const Delivery = require("../models/delivery");
 
 
 router.post("/register", async (req, res) => {
+  console.log("<........register user........>")
   const number = req.body.phoneNumber
   console.log("register api called")
   User.find({ phoneNumber: number }).exec()
@@ -25,7 +26,7 @@ router.post("/register", async (req, res) => {
           phoneNumber: number
         })
         user.save().then(resp => {
-          console.log(".........registering new user.....")
+          console.log("<.........registering new user:resp.......>")
           const otpreq = {
             method: 'get',
             url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2`,
@@ -46,31 +47,31 @@ router.post("/register", async (req, res) => {
               }
             }).catch((err) => {
               console.log("...........1..........")
-              console.log(err)
+              console.log("<........error........>"+err)
               res.status(400).send(err)
             })
         }).catch(err => {
           console.log("...........2..........")
-          console.log(err)
+          console.log("<........error........>"+err)
           res.status(400).send(err)
         })
       }
     }).catch(err => {
       console.log("...........3..........")
-      console.log(err)
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 
 });
 
 router.post("/login", (req, res) => {
+  console.log("<........login user........>")
   User.find({ cardNumber: req.body.cardNumber }).exec()
     .then(user => {
       //no user exist
       if (user.length < 1) {
         res.status(404).send("user not found")
       } else {
-        //console.log(user[0])
         if (user[0].phoneNumber != null) {
           //user found , send otp 
           const otpreq = {
@@ -88,7 +89,7 @@ router.post("/login", (req, res) => {
               //console.log(resp.data.OTP)
               res.status(200).send({"message":"OTP sended","user":user[0]})
             }).catch((err) => {
-              console.log(err)
+              console.log("<........error........>"+err)
               res.status(400).send(err)
             })
         } else {
@@ -98,6 +99,7 @@ router.post("/login", (req, res) => {
     })
 });
 router.post("/verify_otp", (req, res) => {
+  console.log("<........verify otp user........>")
   User.find({ phoneNumber: req.body.phoneNumber })
     .then(user => {
       if (user.length < 1) {
@@ -112,11 +114,12 @@ router.post("/verify_otp", (req, res) => {
         }
       }
     }).catch(err => {
-      console.log(err)
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 })
 router.post("/application_form_filling", async (req, res) => {
+  console.log("<........application form filling user........>")
   const data = req.body
   User.find({ phoneNumber: data.phoneNumber }).then((user) => {
     if (user.length < 1) {
@@ -127,14 +130,17 @@ router.post("/application_form_filling", async (req, res) => {
         .then((resp) => {
           res.status(200).send("Application form submitted")
         }).catch((err) => {
+          console.log("<........error........>"+err)
           res.status(400).send("something went wrong")
         })
     }
   }).catch((err) => {
+    console.log("<........error........>"+err)
     res.status(404).send(err)
   })
 })
 router.get("/get_by_cardNumber/:number", (req, res) => {
+  console.log("<........user get by card number........>")
   User.find({ cardNumber: req.params.number })
     .then((user) => {
       if (user.length < 1) {
@@ -145,19 +151,23 @@ router.get("/get_by_cardNumber/:number", (req, res) => {
 
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.get("/get_all_valid_users", (req, res) => {
+  console.log("<........get all valid users........>")
   User.find({ cardNumber: { $not: { $eq: null } } })
     .then((resp) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.get("/get_membership_requests", (req, res) => {
+  console.log("<........get membership requests........>")
   User.find({
     $and: [{ cardNumber: null }, { wardNumber: { $not: { $eq: null } } }]
   })
@@ -165,20 +175,23 @@ router.get("/get_membership_requests", (req, res) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
-      console.log(err)
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.get("/reject_membership_request/:phoneNumber", (req, res) => {
+  console.log("<........reject membership request........>")
   User.findOneAndDelete({ phoneNumber: req.params.phoneNumber })
     .then((resp) => {
       res.status(200).send(req.params.phoneNumber + " memebership request rejected")
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.post("/accept_membership_request", (req, res) => {
+  console.log("<........accept membership request........>")
   const data = req.body
   console.log(data.phoneNumber)
   User.findOneAndUpdate({ phoneNumber: data.phoneNumber }, data)
@@ -186,10 +199,12 @@ router.post("/accept_membership_request", (req, res) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.post("/update", (req, res) => {
+  console.log("<........update user........>")
   const data = req.body
   User.find({ phoneNumber: data.phoneNumber }).exec()
     .then(user => {
@@ -200,20 +215,23 @@ router.post("/update", (req, res) => {
         .then(resp =>{
           res.status(200).send("user updated")
         }).catch(err =>{
+          console.log("<........error........>"+err)
           res.status(400).send("something went wrong")
         })
       }
     }).catch(err => {
-      console.log(err)
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 
 })
 router.get("/place_return/:checkout_Id", (req, res) => {
+  console.log("<........place return:{}........>"+req.params.checkout_Id)
   Delivery.findOneAndUpdate({ _id: req.params.checkout_Id }, { checkinStatus: "T" })
     .then(resp => {
       res.status(200).send(resp)
     }).catch(err => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 })

@@ -13,6 +13,7 @@ const Hold = require("../models/hold");
 
 
 router.post("/register", async (req, res) => {
+  console.log("<........register delivery person........>")
   const number = req.body.phoneNumber
   DP.find({ phoneNumber: number }).exec()
     .then(user => {
@@ -34,17 +35,16 @@ router.post("/register", async (req, res) => {
           axios(otpreq)
             .then(async (resp1) => {
               res.status(201).send("User created.OTP sended")
-              console.log(resp1.data.OTP)
               //check if it works , if works flush it in 2 mints
               user.otp = resp1.data.OTP
               user.save();
 
             }).catch((err) => {
-              console.log(err)
+              console.log("<........error........>"+err)
               res.status(500).send(err)
             })
         }).catch(err => {
-          console.log(err)
+          console.log("<........error........>"+err)
           res.status(500).send(err)
         })
       }
@@ -52,6 +52,7 @@ router.post("/register", async (req, res) => {
 
 });
 router.post("/login", (req, res) => {
+  console.log("<........login delivery person........>")
   DP.find({ phoneNumber: req.body.phoneNumber }).exec()
     .then(user => {
       //no user exist
@@ -72,19 +73,20 @@ router.post("/login", (req, res) => {
            // console.log(resp.data)
             user[0].otp = resp.data.OTP
             user[0].save();
-            console.log(resp.data.OTP)
             res.status(200).send({"message":"OTP sended","user":user[0]})
           }).catch((err) => {
-            console.log(err)
+            console.log("<........error........>"+err)
             res.status(400).send(err)
           })
 
       }
     }).catch(err =>{
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 });
 router.post("/verify_otp", (req, res) => {
+  console.log("<........verify otp delivery partner........>")
   DP.find({ phoneNumber: req.body.phoneNumber })
     .then(user => {
       if (user.length < 1) {
@@ -99,11 +101,12 @@ router.post("/verify_otp", (req, res) => {
         }
       }
     }).catch(err => {
-      console.log(err)
+      console.log("<........error........>"+err)
       res.status(500).send(err)
     })
 })
 router.post("/application_form_filling", async (req, res) => {
+  console.log("<........application form filling delivery partner........>")
   const data = req.body
   DP.find({ phoneNumber: data.phoneNumber }).then((user) => {
     if (user.length < 1) {
@@ -117,63 +120,76 @@ router.post("/application_form_filling", async (req, res) => {
         .then((resp) => {
           res.status(200).send("application form submitted")
         }).catch((err) => {
+          console.log("<........error........>"+err)
           res.status(400).send("something went wrong")
         })
       // }
     }
   }).catch((err) => {
+    console.log("<........error........>"+err)
     res.status(400).send(err)
   })
 })
 router.get("/get_delivery_person_applications", (req, res) => {
+  console.log("<........get delivery person application........>")
   DP.find({ status: "F" })
     .then((resp) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.post("/approve_delivery_person", (req, res) => {
+  console.log("<........approve delivery person........>")
   const { data } = req.body
   DP.findOneAndUpdate({ phoneNumber: req.body.phoneNumber }, { wardNumber:req.body.wardNumber,status: "T" })
     .then((resp) => {
       res.status(200).send("Approved the delivery person")
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.post("/update", (req, res) => {
+  console.log("<........update delivery person........>")
   const { data } = req.body
   DP.findOneAndUpdate({ phoneNumber: req.body.phoneNumber }, data)
     .then((resp) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.get("/get_all_valid_delivery_persons", (req, res) => {
+  console.log("<........get all valid delivery person........>")
   DP.find({ status: "T" })
     .then((resp) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 router.post("/delete/:phoneNumber", (req, res) => {
+  console.log("<........delete delivery person........>")
   DP.findOneAndDelete({ phoneNumber: req.params.phoneNumber },)
     .then((resp) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     });
 })
 
 router.get("/get_all_delivery_by_person/:deliverPerson_Id", (req, res) => {
+  console.log("<........get delivery by person(dp controller)........>")
   Delivery.find({
     $and: [{ deliveryPerson: req.params.deliverPerson_Id },
     { checkoutStatus: "T" }]
@@ -181,21 +197,24 @@ router.get("/get_all_delivery_by_person/:deliverPerson_Id", (req, res) => {
     .then(resp => {
       res.status(200).send(resp)
     }).catch(err => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 })
 router.get("/conform_delivery/:checkout_Id",(req,res) =>{
+  console.log("<........conform delivery by delivery partner........>")
 Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{userInHand:"T"})
 .then(resp =>{
   Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F"}).exec()
   Hold.findOneAndUpdate({_id:resp.holdId},{holdStatus:"F"}).exec()
   res.status(200).send("confirmed delivery")
 }).catch(err =>{
-  console.log(err)
+  console.log("<........error........>"+err)
   res.status(400).send(err)
 })
 })
 router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
+  console.log("<........get all return by delivery person........>")
   Delivery.find({
     $and:[{deliveryPerson: req.params.deliveryPerson_Id},
     {checkinStatus:"T"}]
@@ -203,17 +222,20 @@ router.get("/get_all_return/:deliveryPerson_Id", (req, res) => {
     .then(resp => {
       res.status(200).send(resp)
     }).catch(err => {
+      console.log("<........error........>"+err)
       res.status(400).send(err)
     })
 })
 router.get("/conform_return_deliveryPerson/:checkout_Id",(req,res) =>{
+  console.log("<........conform return by delivery person........>")
   Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkinStatus:"F",userInHand:"F",checkoutStatus:"F"})
   .then(resp =>{
     Hold.findOneAndUpdate({_id:resp.holdId},{checkoutStatus:"F"}).exec()
     Book.findOneAndUpdate({accessionNo:resp.accessionNo},{checkout:"F"}).exec()
-    console.log(resp)
+   // console.log(resp)
     res.status(200).send("return confirmed")
   }).catch(err =>{
+    console.log("<........error........>"+err)
     res.status(400).send(err)
   })
   })

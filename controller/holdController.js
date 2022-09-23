@@ -6,6 +6,7 @@ const express = require("express");
 const router = express.Router();
 
 router.post("/place_hold", async (req, res) => {
+    console.log("<........place hold........>")
     const data = req.body
     await User.find({ cardNumber: req.body.cardNumber }).exec()
         .then(user => {
@@ -28,62 +29,70 @@ router.post("/place_hold", async (req, res) => {
                             book[0].save();
                             res.status(201).send("hold created")
                         }).catch(err => {
-                            console.log(err)
+                            console.log("<........error........>"+err)
                             res.status(400).send("something went wrong")
                         })
                     }
                 }).catch(err => {
-                    console.log(err)
+                    console.log("<........error........>"+err)
                     res.status(400).send(err)
                 })
 
             }
         }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(400).send(err)
         })
 
 })
 router.get("/cancel_hold_user/:hold_Id", async (req, res) => {
+    console.log("<........cancel hold by user........>")
     Hold.find({ _id: req.params.hold_Id }).then((hold) => {
         if (hold.checkoutStatus == "T") {
             res.status(405).send({
                 message: "can't cancel hold now. you can return book once it is arrived"
             })
         } else {
-            //console.log(hold.accessionNo)
             Book.findOneAndUpdate({ accessionNo: hold[0].accessionNo }, { hold: "F" }).exec()
             Hold.findOneAndDelete({ _id: req.params.hold_Id }).exec();
             res.status(200).send("hold cancelled")
         }
 
     }).catch(err => {
+        console.log("<........error........>"+err)
         res.status(400).send(err)
     })
 })
 router.get("/cancel_hold_admin/:hold_Id", async (req, res) => {
+    console.log("<........cancle hold by admin........>")
     Hold.find({ _id: req.params.hold_Id }).then((hold) => {
             Book.findOneAndUpdate({ accessionNo: hold[0].accessionNo }, { hold: "F" }).exec()
             Hold.findOneAndDelete({ _id: req.params.hold_Id }).exec();
             res.status(200).send("hold cancelled")
 
     }).catch(err => {
+        console.log("<........error........>"+err)
         res.status(400).send(err)
     })
 })
 router.get("/get_list", (req, res) => {
+    console.log("<........get hold list all........>")
     Hold.find( { holdStatus: "T" }).then(resp => {
         res.status(200).send(resp)
     }).catch(err => {
+        console.log("<........error........>"+err)
         res.status(400).send(err)
     })
 })
 router.get("/get_active_hold_list_user/:cardNumber", (req, res) => {
+    console.log("<........get active hold list by user........>")
     Hold.find({
         $and: [{ cardNumber: req.params.cardNumber },
         { holdStatus: "T" }]       
     }).then((resp) => {
         res.status(200).send(resp)
     }).catch(err => {
+        console.log("<........error........>"+err)
         res.status(400).send(err)
     })
 })

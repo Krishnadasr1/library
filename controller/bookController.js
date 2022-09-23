@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 router.post("/search", async (req, res) => {
+    console.log("<........book search........>")
     const { text, page } = req.body
     if (text != "") {
         const resPerPage = 6;
@@ -12,7 +13,6 @@ router.post("/search", async (req, res) => {
             // const txt = text
             await Book.find({ bookTitle: { '$regex': `^` + text, '$options': 'i' } })
                 .then((resp) => {
-                    console.log(resp)
                     res.status(200).send({
                         CurrentPage: 1,
                         TotalPages: 1,
@@ -21,7 +21,7 @@ router.post("/search", async (req, res) => {
                         data: resp
                     })
                 }).catch((err) => {
-                    console.log(err)
+                    console.log("<........error........>"+err)
                     res.status(500).send("Something went wrong")
                 })
         } else {
@@ -29,7 +29,6 @@ router.post("/search", async (req, res) => {
             await Book.find({ bookTitle: { '$regex': `^` + text, '$options': 'i' } })
                 .skip((resPerPage * page1) - resPerPage)
                 .limit(resPerPage).then(async (resp) => {
-                    console.log(resp)
                     res.status(200).send({
                         CurrentPage: page1,
                         TotalPages: Math.ceil(numOfItems / resPerPage),
@@ -38,7 +37,7 @@ router.post("/search", async (req, res) => {
                         data: resp
                     })
                 }).catch((err) => {
-                    console.log(err);
+                    console.log("<........error........>"+err)
                     res.status(500).send("Something went wrong")
                 })
         }
@@ -49,10 +48,9 @@ router.post("/search", async (req, res) => {
     }
 })
 router.get("/get_by_accessionNo/:accessionNo", (req, res) => {
+    console.log("<........get by accession no........>")
     Book.find({ accessionNo: req.params.accessionNo })
-        //console.log(book)
         .then((resp) => {
-            console.log(resp)
             if (resp != null) {
                 res.status(200).send(resp)
             }
@@ -60,25 +58,28 @@ router.get("/get_by_accessionNo/:accessionNo", (req, res) => {
                 res.status(404).send("No book with such Accession Number")
             }
         }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(500).send(err)
         })
 })
 router.get("/get_trends", async (req, res) => {
+    console.log("<........get trends........>")
     await Book.find({ trends: "1" })
         .then(async (resp) => {
             res.status(200).send(resp)
         }).catch((err) => {
-            console.log(err);
+            console.log("<........error........>"+err)
             res.status(500).send("Something went wrong")
         })
 
 })
 router.get("/get_release", async (req, res) => {
+    console.log("<........get new release........>")
     await Book.find({ release: "1" })
         .then(async (resp) => {
             res.status(200).send(resp)
         }).catch((err) => {
-            console.log(err);
+            console.log("<........error........>"+err)
             res.status(500).send("Something went wrong")
         })
 
@@ -86,26 +87,31 @@ router.get("/get_release", async (req, res) => {
 
 
 router.post("/add_to_trends/:accessionNo", (req, res) => {
+    console.log("<........add to trends........>")
     Book.find({ accessionNo: req.params.accessionNo })
         .then((book) => {
             book[0].trends = "1"
             book[0].save();
             res.status(200).send("Book added to top trends")
         }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(500).send(err)
         })
 })
 router.post("/add_to_release/:accessionNo", (req, res) => {
+    console.log("<........add to new releasae........>")
     Book.find({ accessionNo: req.params.accessionNo })
         .then((book) => {
             book[0].release = "1"
             book[0].save();
             res.status(200).send("Book added to new relase")
         }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(500).send(err)
         })
 })
 router.post("/check_availability/:accessionNo", (req, res) => {
+    console.log("<........check availability........>")
     Book.find({ accessionNo: req.params.accessionNo })
         .then((book) => {
             if (book.length < 1) {
@@ -118,35 +124,37 @@ router.post("/check_availability/:accessionNo", (req, res) => {
                 }
             }
         }).catch(err => {
-            console.log(err)
+            console.log("<........error........>"+err)
             res.status(500).send(err)
         })
 })
 router.get("/books_in_users_hand", (req, res) => {
+    console.log("<........books in users hand........>")
     Delivery.find({ userInHand: "T" })
         .then(resp => {
             res.status(200).send(resp)
         }).catch(err => {
-            console.log(err)
+            console.log("<........error........>"+err)
             res.status(400).send(err)
         })
 })
 router.get("/get_all_category", (req, res) => {
+    console.log("<........get all category........>")
     Book.distinct('subjectHeading')
-        //console.log(book)
         .then((resp) => {
             res.status(200).send(resp)
         }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(500).send(err)
         })
 })
 router.get("/list_by_category/:category", (req, res) => {
+    console.log("<........list by category:{}........>"+req.params.category)
     Book.find({ subjectHeading: req.params.category })
-        //console.log(book)
         .then((resp) => {
             res.status(200).send(resp)
-
         }).catch(err => {
+            console.log("<........error........>"+err)
             res.status(500).send(err)
         })
 })
