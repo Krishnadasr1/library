@@ -248,6 +248,16 @@ router.get("/past_read_books/:cardNumber", (req, res) => {
       res.status(400).send(err)
     })
 })
+router.get("/checkout_by_user/:cardNumber", (req, res) => {
+  console.log("<........checkout of user........>")
+  Delivery.find({cardNumber: req.params.cardNumber})
+    .then(resp => {
+      res.status(200).send(resp)
+    }).catch(err => {
+      console.log("<........error........>"+err)
+      res.status(400).send(err)
+    })
+})
 // router.post("/delete/:cardNumber", (req,res) =>{
 //   User.find({ cardNumber: req.params.cardNumber},)
 //   .then(async(user) => {
