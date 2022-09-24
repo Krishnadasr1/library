@@ -183,15 +183,50 @@ router.get("/get_all_category", (req, res) => {
             res.status(500).send(err)
         })
 })
-router.get("/list_by_category/:category", (req, res) => {
-    console.log("<........list by category:{}........>"+req.params.category)
-    Book.find({ subjectHeading: req.params.category })
-        .then((resp) => {
-            res.status(200).send(resp)
-        }).catch(err => {
-            console.log("<........error........>"+err)
-            res.status(500).send(err)
+router.post("/list_by_category", async (req, res) => {
+    console.log("<........book list by category........>")
+    const { category, page } = req.body
+    if (category != "") {
+        const resPerPage = 6;
+        const page1 = page || 1;
+        const numOfItems = await Book.count({ subjectHeading : { '$regex': `^` + category, '$options': 'i' } });
+        if (numOfItems < resPerPage) {
+            // const txt = text
+            await Book.find({ subjectHeading : { '$regex': `^` + category, '$options': 'i' } })
+                .then((resp) => {
+                    res.status(200).send({
+                        CurrentPage: 1,
+                        TotalPages: 1,
+                        Category: category,
+                        TotalBooks: numOfItems,
+                        data: resp
+                    })
+                }).catch((err) => {
+                    console.log("<........error........>"+err)
+                    res.status(500).send("Something went wrong")
+                })
+        } else {
+            //{'$regex' : '^string', '$options' : 'i'}
+            await Book.find({ subjectHeading : { '$regex': `^` + category, '$options': 'i' } })
+                .skip((resPerPage * page1) - resPerPage)
+                .limit(resPerPage).then(async (resp) => {
+                    res.status(200).send({
+                        CurrentPage: page1,
+                        TotalPages: Math.ceil(numOfItems / resPerPage),
+                        Category: category,
+                        TotalBooks: numOfItems,
+                        data: resp
+                    })
+                }).catch((err) => {
+                    console.log("<........error........>"+err)
+                    res.status(500).send("Something went wrong")
+                })
+        }
+    } else {
+        res.status(404).send({
+            message: "Please enter a category"
         })
+    }
 })
 module.exports = router;
 
