@@ -17,7 +17,7 @@ router.post("/place_hold", async (req, res) => {
                     if (book.length < 1) {
                         res.status(400).send("book not found")
                     }
-                    else if ((book[0].hold == "T")) {
+                    else if ((book[0].hold == "T"&& book[0].checkout=="T")) {
                         res.status(405).send("book already on hold")
                     }
                     else {

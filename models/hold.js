@@ -10,7 +10,7 @@ const holdSchema = new mongoose.Schema({
    wardName: String,
    wardNumber: String,
    postOffice: String,
-   pinCode: String,
+   pincode: String,
    phoneNumber: String,
   checkoutStatus:{
    type:String,

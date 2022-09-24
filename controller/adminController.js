@@ -83,7 +83,7 @@ router.get("/conform_return_by_admin/:checkout_Id",(req,res) =>{
     console.log("<........Conform delivery by admin........>")
     Delivery.findOneAndUpdate({_id:req.params.checkout_Id},{checkinStatus:"F",dpInHand:"F"})
     .then(resp =>{
-        Book.findOneAndUpdate({accessionNo:resp.accessionNo},{hold:"F",checkout:"F"})
+        Book.findOneAndUpdate({accessionNo:resp.accessionNo},{checkout:"F"}).exec()
       res.status(200).send("return confirmed")
     }).catch(err =>{
         console.log("<........error........>"+err)

@@ -132,7 +132,10 @@ router.post("/application_form_filling", async (req, res) => {
 })
 router.get("/get_delivery_person_applications", (req, res) => {
   console.log("<........get delivery person application........>")
-  DP.find({ status: "F" })
+  DP.find({
+    $and: [{ status:"F" },
+    { name: { $not: { $eq: null } } }]
+  })
     .then((resp) => {
       res.status(200).send(resp)
     })
