@@ -82,13 +82,17 @@ router.post("/login", (req, res) => {
             }
           }
           axios(otpreq)
-            .then((resp) => {
+          .then(async (resp1) => {
+            console.log(resp1.data.Status)
+            if (resp1.data.Status == "Error") {
+              res.status(200).send({ "Success": "User created.", "Error": "OTP service stopped temporarily due to insufficient balance." })
+            } else {
+              res.status(201).send({ "Success": "User created.OTP sended" })
               //check if it works , if works flush it in 2 mints
-              user[0].otp = resp.data.OTP
+              user[0].otp = resp1.data.OTP
               user[0].save();
-              //console.log(resp.data.OTP)
-              res.status(200).send({"message":"OTP sended","user":user[0]})
-            }).catch((err) => {
+            }
+          }).catch((err) => {
               console.log("<........error........>"+err)
               res.status(400).send(err)
             })
