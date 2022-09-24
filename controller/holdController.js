@@ -48,7 +48,7 @@ router.post("/place_hold", async (req, res) => {
 router.get("/cancel_hold_user/:hold_Id", async (req, res) => {
     console.log("<........cancel hold by user........>")
     Hold.find({ _id: req.params.hold_Id }).then((hold) => {
-        if (hold.checkoutStatus == "T") {
+        if (hold[0].checkoutStatus == "T") {
             res.status(405).send({
                 message: "can't cancel hold now. you can return book once it is arrived"
             })

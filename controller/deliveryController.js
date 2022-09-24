@@ -33,7 +33,7 @@ router.post("/place_checkout", (req, res) => {
               })
               delivery.save().then(resp => {
                 Hold.findOneAndUpdate({ _id:data.holdId }, { checkoutStatus : "T" })
-                  .then(resp => {
+                  .then(resp1 => {
                     Book.findOneAndUpdate({ accessionNo: data.accessionNo }, { checkout: "T" }).exec()
                     res.status(200).send(resp)
                   }).catch(err => {
