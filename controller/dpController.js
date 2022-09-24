@@ -71,9 +71,9 @@ router.post("/login", (req, res) => {
         .then(async (resp1) => {
           console.log(resp1.data.Status)
           if (resp1.data.Status == "Error") {
-            res.status(200).send({ "Success": "User created.", "Error": "OTP service stopped temporarily due to insufficient balance." })
+            res.status(200).send({ "Success": "Login success.", "Error": "OTP service stopped temporarily due to insufficient balance." })
           } else {
-            res.status(201).send({ "Success": "User created.OTP sended" })
+            res.status(201).send({ Success: "Login success.OTP sended",user:user[0] })
             //check if it works , if works flush it in 2 mints
             user[0].otp = resp1.data.OTP
             user[0].save();

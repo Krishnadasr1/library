@@ -47,18 +47,18 @@ router.post("/register", async (req, res) => {
               }
             }).catch((err) => {
               console.log("...........1..........")
-              console.log("<........error........>"+err)
+              console.log("<........error........>" + err)
               res.status(400).send(err)
             })
         }).catch(err => {
           console.log("...........2..........")
-          console.log("<........error........>"+err)
+          console.log("<........error........>" + err)
           res.status(400).send(err)
         })
       }
     }).catch(err => {
       console.log("...........3..........")
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     })
 
@@ -82,18 +82,18 @@ router.post("/login", (req, res) => {
             }
           }
           axios(otpreq)
-          .then(async (resp1) => {
-            console.log(resp1.data.Status)
-            if (resp1.data.Status == "Error") {
-              res.status(200).send({ "Success": "User created.", "Error": "OTP service stopped temporarily due to insufficient balance." })
-            } else {
-              res.status(201).send({ "Success": "User created.OTP sended" })
-              //check if it works , if works flush it in 2 mints
-              user[0].otp = resp1.data.OTP
-              user[0].save();
-            }
-          }).catch((err) => {
-              console.log("<........error........>"+err)
+            .then(async (resp1) => {
+              console.log(resp1.data.Status)
+              if (resp1.data.Status == "Error") {
+                res.status(200).send({ "Success": "Login success", "Error": "OTP service stopped temporarily due to insufficient balance." })
+              } else {
+                res.status(201).send({ Success: "Login success.OTP sended",user:user[0] })
+                //check if it works , if works flush it in 2 mints
+                user[0].otp = resp1.data.OTP
+                user[0].save();
+              }
+            }).catch((err) => {
+              console.log("<........error........>" + err)
               res.status(400).send(err)
             })
         } else {
@@ -118,7 +118,7 @@ router.post("/verify_otp", (req, res) => {
         }
       }
     }).catch(err => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     })
 })
@@ -134,12 +134,12 @@ router.post("/application_form_filling", async (req, res) => {
         .then((resp) => {
           res.status(200).send("Application form submitted")
         }).catch((err) => {
-          console.log("<........error........>"+err)
+          console.log("<........error........>" + err)
           res.status(400).send("something went wrong")
         })
     }
   }).catch((err) => {
-    console.log("<........error........>"+err)
+    console.log("<........error........>" + err)
     res.status(404).send(err)
   })
 })
@@ -155,7 +155,7 @@ router.get("/get_by_cardNumber/:number", (req, res) => {
 
     })
     .catch((err) => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     });
 })
@@ -166,7 +166,7 @@ router.get("/get_all_valid_users", (req, res) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     });
 })
@@ -179,7 +179,7 @@ router.get("/get_membership_requests", (req, res) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     });
 })
@@ -190,7 +190,7 @@ router.get("/reject_membership_request/:phoneNumber", (req, res) => {
       res.status(200).send(req.params.phoneNumber + " memebership request rejected")
     })
     .catch((err) => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     });
 })
@@ -203,7 +203,7 @@ router.post("/accept_membership_request", (req, res) => {
       res.status(200).send(resp)
     })
     .catch((err) => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     });
 })
@@ -215,53 +215,96 @@ router.post("/update", (req, res) => {
       if (user.length < 1) {
         res.status(404).send("User not found")
       } else {
-        User.findOneAndUpdate({ phoneNumber: data.phoneNumber },data)
-        .then(resp =>{
-          res.status(200).send("user updated")
-        }).catch(err =>{
-          console.log("<........error........>"+err)
-          res.status(400).send("something went wrong")
-        })
+        User.findOneAndUpdate({ phoneNumber: data.phoneNumber }, data)
+          .then(resp => {
+            res.status(200).send("user updated")
+          }).catch(err => {
+            console.log("<........error........>" + err)
+            res.status(400).send("something went wrong")
+          })
       }
     }).catch(err => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     })
 
 })
 router.get("/place_return/:checkout_Id", (req, res) => {
-  console.log("<........place return:{}........>"+req.params.checkout_Id)
+  console.log("<........place return:{}........>" + req.params.checkout_Id)
   Delivery.findOneAndUpdate({ _id: req.params.checkout_Id }, { checkinStatus: "T" })
     .then(resp => {
       res.status(200).send("return placed")
     }).catch(err => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     })
 })
 router.get("/past_read_books/:cardNumber", (req, res) => {
   console.log("<........past read books user........>")
   Delivery.find({
-    $and:[{cardNumber: req.params.cardNumber},
-    {userInHand:"F"}]
+    $and: [{ cardNumber: req.params.cardNumber },
+    { userInHand: "F" }]
   })
     .then(resp => {
       res.status(200).send(resp)
     }).catch(err => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     })
 })
 router.get("/checkout_by_user/:cardNumber", (req, res) => {
   console.log("<........checkout of user........>")
-  Delivery.find({cardNumber: req.params.cardNumber})
+  Delivery.find({ cardNumber: req.params.cardNumber })
     .then(resp => {
       res.status(200).send(resp)
     }).catch(err => {
-      console.log("<........error........>"+err)
+      console.log("<........error........>" + err)
       res.status(400).send(err)
     })
 })
+// router.get("/delete_user/:cardNumber", (req, res) => {
+//   console.log("<........delete user........>")
+//   User.find({ cardNumber: req.params.cardNumber })
+//     .then((user) => {
+//       if (user.length < 1) {
+//         res.status(404).send("No user found")
+//       } else {
+//         console.log(user[0])
+//         Hold.find({ cardNumber: req.params.cardNumber })
+//           .then(hold => {
+//             console.log(hold)
+//             if (hold.length >= 1) {
+//               res.status(405).send("active hold exists for the user. cancel hold before deleting user")
+//             } else {
+//               Delivery.find({ cardNumber: req.params.cardNumber })
+//                 .then(delivery => {
+//                   if (delivery.length >= 1) {
+
+//                     res.send(405).send("checkin pending. Return the books before deleting the user")
+//                   } else {
+//                     res.status(200).send("ready to delete")
+//                   }
+//                 })
+//               res.status(200).send("can delete user")
+//             }
+//           }).catch(err => {
+//             console.log("<........error........>" + err)
+//             res.status(400).send(err)
+//           })
+
+//         // res.status(200).send(user[0])
+//       }
+
+//     })
+//     .catch((err) => {
+//       console.log("<........error........>" + err)
+//       res.status(400).send(err)
+//     });
+// })
+
+
+
+
 // router.post("/delete/:cardNumber", (req,res) =>{
 //   User.find({ cardNumber: req.params.cardNumber},)
 //   .then(async(user) => {
