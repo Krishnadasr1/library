@@ -1,7 +1,7 @@
 const app = require("./index");
 require("dotenv").config();
 const mongoose = require("mongoose");
-mongoose.connect(`${process.env.DB_URL}/Library`, {
+mongoose.connect(`${process.env.DB_URL}/AlappuzhaLibrary`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
