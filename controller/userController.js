@@ -19,7 +19,36 @@ router.post("/register", async (req, res) => {
   User.find({ phoneNumber: number }).exec()
     .then(user => {
       if (user.length >= 1) {
-        res.status(405).send("User Exist.Try another phone number")
+        if (user[0].otpFirstTimeVerifed == "true") {
+          res.status(405).send("User Exist.Try another phone number")
+        } else {
+         
+            console.log("<.........resending otp for verification : register user.......>")
+            const otpreq = {
+              method: 'get',
+              url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2`,
+              headers: {
+                Accept: 'application.json'
+              }
+            }
+            axios(otpreq)
+              .then(async (resp1) => {
+                console.log(resp1.data.Status)
+                if (resp1.data.Status == "Error") {
+                  res.status(200).send({ "Success": "User Accepted", "Error": "OTP service stopped temporarily due to insufficient balance." })
+                } else {
+                  res.status(201).send({ "Success": "Resending OTP for verification" })
+                  //check if it works , if works flush it in 2 mints
+                  user[0].otp = resp1.data.OTP
+                  user[0].save();
+                }
+              }).catch((err) => {
+                console.log("...........1..........")
+                console.log("<........error........>" + err)
+                res.status(400).send(err)
+              })
+          
+        }
       } else {
 
         const user = User({
@@ -87,7 +116,7 @@ router.post("/login", (req, res) => {
               if (resp1.data.Status == "Error") {
                 res.status(200).send({ "Success": "Login success", "Error": "OTP service stopped temporarily due to insufficient balance." })
               } else {
-                res.status(201).send({ Success: "Login success.OTP sended",user:user[0] })
+                res.status(201).send({ Success: "Login success.OTP sended", user: user[0] })
                 //check if it works , if works flush it in 2 mints
                 user[0].otp = resp1.data.OTP
                 user[0].save();
@@ -111,6 +140,7 @@ router.post("/verify_otp", (req, res) => {
       } else {
         if (user[0].otp == req.body.OTP) {
           user[0].otp = null;
+          user[0].otpFirstTimeVerifed = "true";
           user[0].save();
           res.status(200).send("Success")
         } else {
@@ -284,6 +314,9 @@ router.get("/checkout_by_user/:cardNumber", (req, res) => {
 //                   } else {
 //                     res.status(200).send("ready to delete")
 //                   }
+//                 }).catch( err =>{
+//                   console.log("<........error........>" + err)
+//                   res.status(400).send(err)
 //                 })
 //               res.status(200).send("can delete user")
 //             }

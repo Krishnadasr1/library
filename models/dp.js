@@ -47,6 +47,10 @@ const dpSchema = new mongoose.Schema({
         type:String,
         default:null
     },
+    otpFirstTimeVerifed:{
+        type:String,
+        default:"false"
+    }
 
 }, { timestamps: true })
 

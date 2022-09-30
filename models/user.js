@@ -63,7 +63,10 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:null
     },
-  
+    otpFirstTimeVerifed:{
+        type:String,
+        default:"false"
+    },
     gender:{
         type:String,
     },
