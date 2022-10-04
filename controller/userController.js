@@ -22,32 +22,32 @@ router.post("/register", async (req, res) => {
         if (user[0].otpFirstTimeVerifed == "true") {
           res.status(405).send("User Exist.Try another phone number")
         } else {
-         
-            console.log("<.........resending otp for verification : register user.......>")
-            const otpreq = {
-              method: 'get',
-              url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2`,
-              headers: {
-                Accept: 'application.json'
-              }
+
+          console.log("<.........resending otp for verification : register user.......>")
+          const otpreq = {
+            method: 'get',
+            url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2`,
+            headers: {
+              Accept: 'application.json'
             }
-            axios(otpreq)
-              .then(async (resp1) => {
-                console.log(resp1.data.Status)
-                if (resp1.data.Status == "Error") {
-                  res.status(200).send({ "Success": "User Accepted", "Error": "OTP service stopped temporarily due to insufficient balance." })
-                } else {
-                  res.status(201).send({ "Success": "Resending OTP for verification" })
-                  //check if it works , if works flush it in 2 mints
-                  user[0].otp = resp1.data.OTP
-                  user[0].save();
-                }
-              }).catch((err) => {
-                console.log("...........1..........")
-                console.log("<........error........>" + err)
-                res.status(400).send(err)
-              })
-          
+          }
+          axios(otpreq)
+            .then(async (resp1) => {
+              console.log(resp1.data.Status)
+              if (resp1.data.Status == "Error") {
+                res.status(200).send({ "Success": "User Accepted", "Error": "OTP service stopped temporarily due to insufficient balance." })
+              } else {
+                res.status(201).send({ "Success": "Resending OTP for verification" })
+                //check if it works , if works flush it in 2 mints
+                user[0].otp = resp1.data.OTP
+                user[0].save();
+              }
+            }).catch((err) => {
+              console.log("...........1..........")
+              console.log("<........error........>" + err)
+              res.status(400).send(err)
+            })
+
         }
       } else {
 
@@ -292,48 +292,60 @@ router.get("/checkout_by_user/:cardNumber", (req, res) => {
       res.status(400).send(err)
     })
 })
-// router.get("/delete_user/:cardNumber", (req, res) => {
-//   console.log("<........delete user........>")
-//   User.find({ cardNumber: req.params.cardNumber })
-//     .then((user) => {
-//       if (user.length < 1) {
-//         res.status(404).send("No user found")
-//       } else {
-//         console.log(user[0])
-//         Hold.find({ cardNumber: req.params.cardNumber })
-//           .then(hold => {
-//             console.log(hold)
-//             if (hold.length >= 1) {
-//               res.status(405).send("active hold exists for the user. cancel hold before deleting user")
-//             } else {
-//               Delivery.find({ cardNumber: req.params.cardNumber })
-//                 .then(delivery => {
-//                   if (delivery.length >= 1) {
+router.post("/delete/:cardNumber", async (req, res) => {
+  console.log("<........delete user........>")
+  User.find({ cardNumber: req.params.cardNumber })
+    .then((user) => {
+      if (user.length < 1) {
+        res.status(404).send("No user found")
+      } else {
+        // console.log(user[0])
+        Hold.find({ cardNumber: req.params.cardNumber })
+          .then(async hold => {
+            //console.log(hold)
+            if (hold.length >= 1) {
+              res.status(405).send("active hold exists for the user. cancel hold before deleting user")
+            } else {
+              let deliveries = [];
+              //deliveries = await 
+              Delivery.find({ cardNumber: req.params.cardNumber }).exec()
+                .then(delivery => {
+                  let status = "T"
+                  deliveries = delivery
+                  //console.log(deliveries)
+                  if (delivery.length >= 1) {
+                    deliveries.forEach(deliveries => {
+                      if ((deliveries.checkoutStatus = "T") || (deliveries.checkinStatus = "T") || (deliveries.userInHand = "T") || (deliveries.dpInHand = "T")) {
+                        status = "F"
+                      } 
+                    })
+                    if(status =="F"){
+                        res.status(405).send("checkin pending. Return the books before deleting the user")
+                    }else{
+                      res.status(200).send("ready to delete")
+                    }
+                  } else {
+                    res.status(200).send("ready to delete")
+                  }
+                }).catch(err => {
+                  console.log("<........error..1........>" + err)
+                  res.status(400).send(err)
+                })
 
-//                     res.send(405).send("checkin pending. Return the books before deleting the user")
-//                   } else {
-//                     res.status(200).send("ready to delete")
-//                   }
-//                 }).catch( err =>{
-//                   console.log("<........error........>" + err)
-//                   res.status(400).send(err)
-//                 })
-//               res.status(200).send("can delete user")
-//             }
-//           }).catch(err => {
-//             console.log("<........error........>" + err)
-//             res.status(400).send(err)
-//           })
+            }
+          }).catch(err => {
+            console.log("<........error..2........>" + err)
+            res.status(400).send(err)
+          })
 
-//         // res.status(200).send(user[0])
-//       }
+        // res.status(200).send(user[0])
+      }
 
-//     })
-//     .catch((err) => {
-//       console.log("<........error........>" + err)
-//       res.status(400).send(err)
-//     });
-// })
+    }).catch((err) => {
+      console.log("<........error..3........>" + err)
+      res.status(400).send(err)
+    });
+})
 
 
 
