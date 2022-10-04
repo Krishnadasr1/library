@@ -325,7 +325,13 @@ router.post("/delete/:cardNumber", async (req, res) => {
                       res.status(200).send("ready to delete")
                     }
                   } else {
-                    res.status(200).send("ready to delete")
+                    User.findOneAndDelete({ cardNumber: req.params.cardNumber })
+                    .then(resp =>{
+                      res.status(200).send("user deleted")
+                    }).catch(err =>{
+                      console.log(err)
+                      res.status(400).send(err)
+                    })                   
                   }
                 }).catch(err => {
                   console.log("<........error..1........>" + err)
