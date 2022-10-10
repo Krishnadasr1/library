@@ -10,12 +10,12 @@ const userSchema = new mongoose.Schema({
     },
     firstName: {
         type: String,
-        maxlength: 10,
+        //maxlength: 10,
         match: /^[a-zA-Z]/,
     },
     lastName: {
         type: String,
-        maxlength: 10,
+       // maxlength: 10,
         match: /^[a-zA-Z]/,
     },
     cardNumber: {
