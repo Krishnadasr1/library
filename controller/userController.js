@@ -20,9 +20,10 @@ router.post("/register", async (req, res) => {
     .then(user => {
       if (user.length >= 1) {
         if (user[0].otpFirstTimeVerifed == "true") {
+          console.log("otp verified")
           res.status(405).send("User Exist.Try another phone number")
         } else {
-
+          console.log("resending otp")
           console.log("<.........resending otp for verification : register user.......>")
           const otpreq = {
             method: 'get',
@@ -189,6 +190,22 @@ router.get("/get_by_cardNumber/:number", (req, res) => {
       res.status(400).send(err)
     });
 })
+router.get("/get_by_phoneNumber/:number", (req, res) => {
+  console.log("<........user get by card number........>")
+  User.find({ phoneNumber: req.params.number })
+    .then((user) => {
+      if (user.length < 1) {
+        res.status(404).send("No user found")
+      } else {
+        res.status(200).send(user)
+      }
+
+    })
+    .catch((err) => {
+      console.log("<........error........>" + err)
+      res.status(400).send(err)
+    });
+})
 router.get("/get_all_valid_users", (req, res) => {
   console.log("<........get all valid users........>")
   User.find({ cardNumber: { $not: { $eq: null } } })
@@ -292,7 +309,7 @@ router.get("/checkout_by_user/:cardNumber", (req, res) => {
       res.status(400).send(err)
     })
 })
-router.post("/delete/:cardNumber", async (req, res) => {
+router.get("/delete/:cardNumber", async (req, res) => {
   console.log("<........delete user........>")
   User.find({ cardNumber: req.params.cardNumber })
     .then((user) => {
@@ -322,7 +339,14 @@ router.post("/delete/:cardNumber", async (req, res) => {
                     if(status =="F"){
                         res.status(405).send("checkin pending. Return the books before deleting the user")
                     }else{
-                      res.status(200).send("ready to delete")
+                      //res.status(200).send("ready to delete")
+                      User.findOneAndDelete({ cardNumber: req.params.cardNumber })
+                      .then(resp =>{
+                        res.status(200).send("user deleted")
+                      }).catch(err =>{
+                        console.log(err)
+                        res.status(400).send(err)
+                      }) 
                     }
                   } else {
                     User.findOneAndDelete({ cardNumber: req.params.cardNumber })

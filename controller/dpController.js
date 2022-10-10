@@ -213,12 +213,47 @@ router.get("/get_all_valid_delivery_persons", (req, res) => {
       res.status(400).send(err)
     });
 })
-router.post("/delete/:phoneNumber", (req, res) => {
+router.get("/delete/:phoneNumber", (req, res) => {
   console.log("<........delete delivery person........>")
-  DP.findOneAndDelete({ phoneNumber: req.params.phoneNumber },)
+  DP.find({ phoneNumber: req.params.phoneNumber },)
     .then((resp) => {
-      res.status(200).send(resp)
-    })
+      let deliveries = [];
+      Delivery.find({ deliveryPerson: resp._id }).exec()
+      .then(delivery => {
+        let status = "T"
+        deliveries = delivery
+        //console.log(deliveries)
+        if (delivery.length >= 1) {
+          deliveries.forEach(deliveries => {
+            if ((deliveries.checkoutStatus = "T") || (deliveries.checkinStatus = "T") || (deliveries.userInHand = "T") || (deliveries.dpInHand = "T")) {
+              status = "F"
+            } 
+          })
+          if(status =="F"){
+              res.status(405).send("checkin pending. Return the books before deleting the Delivery partner")
+          }else{
+            //res.status(200).send("ready to delete")
+            DP.findOneAndDelete({  phoneNumber: req.params.phoneNumber })
+            .then(resp =>{
+              res.status(200).send("delivery person deleted")
+            }).catch(err =>{
+              console.log(err)
+              res.status(400).send(err)
+            }) 
+          }
+        } else {
+          DP.findOneAndDelete({  phoneNumber: req.params.phoneNumber })
+          .then(resp =>{
+            res.status(200).send("delivery person deleted")
+          }).catch(err =>{
+            console.log(err)
+            res.status(400).send(err)
+          })                   
+        }
+      }).catch(err => {
+        console.log("<........error..1........>" + err)
+        res.status(400).send(err)
+      })    })
     .catch((err) => {
       console.log("<........error........>"+err)
       res.status(400).send(err)
