@@ -218,7 +218,7 @@ router.get("/delete/:phoneNumber", (req, res) => {
   DP.find({ phoneNumber: req.params.phoneNumber },)
     .then((resp) => {
       let deliveries = [];
-      Delivery.find({ deliveryPerson: resp._id }).exec()
+      Delivery.find({ deliveryPerson: resp[0]._id }).exec()
       .then(delivery => {
         let status = "T"
         deliveries = delivery

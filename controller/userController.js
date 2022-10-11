@@ -25,14 +25,22 @@ router.post("/register", async (req, res) => {
         } else {
           console.log("resending otp")
           console.log("<.........resending otp for verification : register user.......>")
-          const otpreq = {
+          const otpreq1 = {
             method: 'get',
             url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2`,
             headers: {
               Accept: 'application.json'
             }
           }
-          axios(otpreq)
+          const otpreq2 = {
+            method: 'get',
+            url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2/${process.env.TWOFACTOR_TEMPLATE_VALUE}`,
+            headers: {
+              Accept: 'application.json'
+            }
+          }
+          if(process.env.TWOFACTOR_TEMPLATE_STATUS=="TRUE"){
+            axios(otpreq2)
             .then(async (resp1) => {
               console.log(resp1.data.Status)
               if (resp1.data.Status == "Error") {
@@ -48,7 +56,25 @@ router.post("/register", async (req, res) => {
               console.log("<........error........>" + err)
               res.status(400).send(err)
             })
-
+          }else{
+            axios(otpreq1)
+            .then(async (resp1) => {
+              console.log(resp1.data.Status)
+              if (resp1.data.Status == "Error") {
+                res.status(200).send({ "Success": "User Accepted", "Error": "OTP service stopped temporarily due to insufficient balance." })
+              } else {
+                res.status(201).send({ "Success": "Resending OTP for verification" })
+                //check if it works , if works flush it in 2 mints
+                user[0].otp = resp1.data.OTP
+                user[0].save();
+              }
+            }).catch((err) => {
+              console.log("...........1..........")
+              console.log("<........error........>" + err)
+              res.status(400).send(err)
+            })
+          }
+          
         }
       } else {
 
@@ -57,14 +83,22 @@ router.post("/register", async (req, res) => {
         })
         user.save().then(resp => {
           console.log("<.........registering new user:resp.......>")
-          const otpreq = {
+          const otpreq1 = {
             method: 'get',
             url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2`,
             headers: {
               Accept: 'application.json'
             }
           }
-          axios(otpreq)
+          const otpreq2 = {
+            method: 'get',
+            url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user.phoneNumber}/AUTOGEN2/${process.env.TWOFACTOR_TEMPLATE_VALUE}`,
+            headers: {
+              Accept: 'application.json'
+            }
+          }
+          if(process.env.TWOFACTOR_TEMPLATE_STATUS=="TRUE"){
+            axios(otpreq2)
             .then(async (resp1) => {
               console.log(resp1.data.Status)
               if (resp1.data.Status == "Error") {
@@ -80,6 +114,25 @@ router.post("/register", async (req, res) => {
               console.log("<........error........>" + err)
               res.status(400).send(err)
             })
+          }else{
+            axios(otpreq1)
+            .then(async (resp1) => {
+              console.log(resp1.data.Status)
+              if (resp1.data.Status == "Error") {
+                res.status(200).send({ "Success": "User created.", "Error": "OTP service stopped temporarily due to insufficient balance." })
+              } else {
+                res.status(201).send({ "Success": "User created.OTP sended" })
+                //check if it works , if works flush it in 2 mints
+                user.otp = resp1.data.OTP
+                user.save();
+              }
+            }).catch((err) => {
+              console.log("...........1..........")
+              console.log("<........error........>" + err)
+              res.status(400).send(err)
+            })
+          }
+          
         }).catch(err => {
           console.log("...........2..........")
           console.log("<........error........>" + err)
