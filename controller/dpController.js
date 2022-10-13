@@ -100,7 +100,12 @@ router.post("/login", (req, res) => {
         res.status(404).send("user not found")
       } else {
         if (req.body.phoneNumber == "9496741190") {
-          res.status(201).send({ Success: "success" })
+          DP.find({ phoneNumber: req.body.phoneNumber }).exec().then(user =>{
+            res.status(201).send({ Success: "Login success.OTP sended", user: user[0] })
+          }).catch(err =>{
+            res.status(400).send(err)
+          })
+          
 
         } else {
           const otpreq = {
