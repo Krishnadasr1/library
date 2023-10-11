@@ -5,7 +5,6 @@ const router = express.Router();
 const User = require("../models/user");
 const Hold = require("../models/hold");
 const Delivery = require("../models/delivery");
-const Dummy = require("../models/dummy");
 
 // const multer = require('multer')
 // const upload = multer({ dest: 'uploads/' })
@@ -265,7 +264,6 @@ router.get("/get_all_valid_users", (req, res) => {
   User.find({ cardNumber: { $not: { $eq: null } } })
     .then((resp) => {
       res.status(200).send(resp)
-      // console.log("send response")
     })
     .catch((err) => {
       console.log("<........error........>" + err)
@@ -467,17 +465,6 @@ router.get("/delete/:cardNumber", async (req, res) => {
 //     res.status(500).send(err)
 //   });
 // })
-
-// router.post("/add",(req,res) =>{
-//   const { firstName, lastName} = req.body;
-//   const dummy = new Dummy({
-//     firstName,
-//     lastName
-//   });
-//   dummy.save()
-//   res.send("Saved");
-// }
-// )
 
 
 

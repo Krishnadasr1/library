@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate");
 
 const bookSchema = new mongoose.Schema({
   bookTitle: String,
@@ -19,6 +20,7 @@ const bookSchema = new mongoose.Schema({
   subjectHeading: String,
   description: String,
   category:String,
+  image: String,
 
 trends:{
     type:String,
@@ -39,5 +41,6 @@ checkout:{
 }
 },
 {timestamps:true})
+
 
 module.exports = mongoose.model('Book', bookSchema)

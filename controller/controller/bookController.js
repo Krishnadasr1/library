@@ -10,9 +10,6 @@ router.post("/search", async (req, res) => {
         const resPerPage = 6;
         const page1 = page || 1;
         const numOfItems = await Book.count({ bookTitle: { '$regex': `^` + text, '$options': 'i' } });
-       
-        
-
         if (numOfItems < resPerPage) {
             // const txt = text
             await Book.find({ bookTitle: { '$regex': `^` + text, '$options': 'i' } })
@@ -31,55 +28,6 @@ router.post("/search", async (req, res) => {
         } else {
             //{'$regex' : '^string', '$options' : 'i'}
             await Book.find({ bookTitle: { '$regex': `^` + text, '$options': 'i' } })
-                .skip((resPerPage * page1) - resPerPage)
-                .limit(resPerPage).then(async (resp) => {
-                    res.status(200).send({
-                        CurrentPage: page1,
-                        TotalPages: Math.ceil(numOfItems / resPerPage),
-                        Search: text,
-                        TotalBooks: numOfItems,
-                        data: resp
-                    })
-                }).catch((err) => {
-                    console.log("<........error........>"+err)
-                    res.status(500).send("Something went wrong")
-                })
-        }
-    } else {
-        res.status(404).send({
-            message: "Please enter a text"
-        })
-    }
-})
-
-router.post("/search_by_authorName", async (req, res) => {
-    console.log("<........book search........>")
-    const { text, page } = req.body
-    if (text != "") {
-        const resPerPage = 6;
-        const page1 = page || 1;
-        const numOfItems = await Book.count({ author: { '$regex': `^` + text, '$options': 'i' } });
-       
-        
-
-        if (numOfItems < resPerPage) {
-            // const txt = text
-            await Book.find({ author: { '$regex': `^` + text, '$options': 'i' } })
-                .then((resp) => {
-                    res.status(200).send({
-                        CurrentPage: 1,
-                        TotalPages: 1,
-                        Search: text,
-                        TotalBooks: numOfItems,
-                        data: resp
-                    })
-                }).catch((err) => {
-                    console.log("<........error........>"+err)
-                    res.status(500).send("Something went wrong")
-                })
-        } else {
-            //{'$regex' : '^string', '$options' : 'i'}
-            await Book.find({ author: { '$regex': `^` + text, '$options': 'i' } })
                 .skip((resPerPage * page1) - resPerPage)
                 .limit(resPerPage).then(async (resp) => {
                     res.status(200).send({
@@ -115,24 +63,6 @@ router.get("/get_by_accessionNo/:accessionNo", (req, res) => {
             res.status(500).send(err)
         })
 })
-
-router.post("/get_by_category",async(req,res) => {
-    console.log(".......get by category............");
-
-    Book.find({subjectHeading: req.params.subjectHeading})
-    .then((resp) => {
-        if(resp!=null) {
-            res.status(200).send(resp)
-        }
-        else {
-            res.status(404).send("no such category")
-        }  
-     })
-    .catch(err =>{
-        console.log(err);
-    })
-})
-
 router.get("/get_trends", async (req, res) => {
     console.log("<........get trends........>")
     await Book.find({ trends: "1" })
@@ -156,7 +86,7 @@ router.get("/get_release", async (req, res) => {
 
 })
 
- 
+
 router.post("/add_to_trends/:accessionNo", (req, res) => {
     console.log("<........add to trends........>")
     Book.find({ accessionNo: req.params.accessionNo })
@@ -298,26 +228,6 @@ router.post("/list_by_category", async (req, res) => {
         })
     }
 })
-
-
-// router.get("/book_details/:accesionNo",(req,res) => {
-//     Book.find({accessionNo : req.params.accessionNo})
-//     .then((book) => {
-//         const bookDetails = {
-//             bookTitle : book.bookTitle,
-//             author : book.author,
-
-            
-//         }
-//         res.status(200).send({ bookDetails : bookDetails });
-//     })
-//     .catch((err) => {
-//         console.log(err);
-//     });
-// })
-
-
-
 module.exports = router;
 
 
