@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 
 const bookSchema = new mongoose.Schema({
   bookTitle: String,
+  image: String,
   ISBN: String,
   language: String,
   publicationPlace: String,
@@ -19,6 +20,7 @@ const bookSchema = new mongoose.Schema({
   subjectHeading: String,
   description: String,
   category:String,
+  shelfNo : String,
 
 trends:{
     type:String,
@@ -28,7 +30,7 @@ release:{
     type:String,
     default:"0"
 },
-image: String,
+
 hold:{
   type:String,
   default:"F"
@@ -38,6 +40,6 @@ checkout:{
   default:"F"
 }
 },
-{timestamps:true})
+{timestamps:true});
 
-module.exports = mongoose.model('Book', bookSchema)
+module.exports = mongoose.model('Book', bookSchema);

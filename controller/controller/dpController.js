@@ -11,6 +11,7 @@ const Hold = require("../models/hold");
 
 
 
+
 router.post("/register", async (req, res) => {
   console.log("<........register delivery person........>")
   const number = req.body.phoneNumber
@@ -245,7 +246,7 @@ router.get("/get_all_valid_delivery_persons", (req, res) => {
 })
 router.get("/delete/:phoneNumber", (req, res) => {
   console.log("<........delete delivery person........>")
-  DP.find({ phoneNumber: req.params.phoneNumber })
+  DP.find({ phoneNumber: req.params.phoneNumber },)
     .then((resp) => {
       let deliveries = [];
       Delivery.find({ deliveryPerson: resp[0]._id }).exec()
@@ -269,7 +270,7 @@ router.get("/delete/:phoneNumber", (req, res) => {
                 }).catch(err => {
                   console.log(err)
                   res.status(400).send(err)
-                })  
+                })
             }
           } else {
             DP.findOneAndDelete({ phoneNumber: req.params.phoneNumber })

@@ -76,7 +76,7 @@ router.get("/cancel_hold_user/:hold_Id", async (req, res) => {
     })
 })
 router.get("/cancel_hold_admin/:hold_Id", async (req, res) => {
-    console.log("<........cancel hold by admin........>")
+    console.log("<........cancle hold by admin........>")
     Hold.find({ _id: req.params.hold_Id }).then((hold) => {
         Book.findOneAndUpdate({ accessionNo: hold[0].accessionNo }, { hold: "F" }).exec()
         Hold.findOneAndDelete({ _id: req.params.hold_Id }).exec();

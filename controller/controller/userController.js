@@ -11,6 +11,7 @@ const Delivery = require("../models/delivery");
 // const { getFileStream } = require('../../s3');
 
 
+
 router.post("/register", async (req, res) => {
   console.log("<........register user........>")
   const number = req.body.phoneNumber
@@ -208,8 +209,7 @@ router.post("/verify_otp", (req, res) => {
 router.post("/application_form_filling", async (req, res) => {
   console.log("<........application form filling user........>")
   const data = req.body
-  User.find({ phoneNumber: data.phoneNumber })
-  .then((user) => {
+  User.find({ phoneNumber: data.phoneNumber }).then((user) => {
     if (user.length < 1) {
       res.status(404).send("user not found")
     } else {
@@ -469,4 +469,3 @@ router.get("/delete/:cardNumber", async (req, res) => {
 
 
 module.exports = router;
-

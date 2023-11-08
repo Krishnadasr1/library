@@ -10,9 +10,6 @@ router.post("/search", async (req, res) => {
         const resPerPage = 6;
         const page1 = page || 1;
         const numOfItems = await Book.count({ bookTitle: { '$regex': `^` + text, '$options': 'i' } });
-       
-     
-
         if (numOfItems < resPerPage) {
             // const txt = text
             await Book.find({ bookTitle: { '$regex': `^` + text, '$options': 'i' } })
@@ -31,55 +28,6 @@ router.post("/search", async (req, res) => {
         } else {
             //{'$regex' : '^string', '$options' : 'i'}
             await Book.find({ bookTitle: { '$regex': `^` + text, '$options': 'i' } })
-                .skip((resPerPage * page1) - resPerPage)
-                .limit(resPerPage).then(async (resp) => {
-                    res.status(200).send({
-                        CurrentPage: page1,
-                        TotalPages: Math.ceil(numOfItems / resPerPage),
-                        Search: text,
-                        TotalBooks: numOfItems,
-                        data: resp
-                    })
-                }).catch((err) => {
-                    console.log("<........error........>"+err)
-                    res.status(500).send("Something went wrong")
-                })
-        }
-    } else {
-        res.status(404).send({
-            message: "Please enter a text"
-        })
-    }
-})
-
-router.post("/search_by_authorName", async (req, res) => {
-    console.log("<........book search........>")
-    const { text, page } = req.body
-    if (text != "") {
-        const resPerPage = 6;
-        const page1 = page || 1;
-        const numOfItems = await Book.count({ author: { '$regex': `^` + text, '$options': 'i' } });
-       
-        
-
-        if (numOfItems < resPerPage) {
-            // const txt = text
-            await Book.find({ author: { '$regex': `^` + text, '$options': 'i' } })
-                .then((resp) => {
-                    res.status(200).send({
-                        CurrentPage: 1,
-                        TotalPages: 1,
-                        Search: text,
-                        TotalBooks: numOfItems,
-                        data: resp
-                    })
-                }).catch((err) => {
-                    console.log("<........error........>"+err)
-                    res.status(500).send("Something went wrong")
-                })
-        } else {
-            //{'$regex' : '^string', '$options' : 'i'}
-            await Book.find({ author: { '$regex': `^` + text, '$options': 'i' } })
                 .skip((resPerPage * page1) - resPerPage)
                 .limit(resPerPage).then(async (resp) => {
                     res.status(200).send({
@@ -137,6 +85,7 @@ router.get("/get_release", async (req, res) => {
         })
 
 })
+
 
 router.post("/add_to_trends/:accessionNo", (req, res) => {
     console.log("<........add to trends........>")
@@ -226,10 +175,6 @@ router.get("/books_in_dp_hand", (req, res) => {
 })
 router.get("/get_all_category", (req, res) => {
     console.log("<........get all category........>")
-
-    const resPerPage = 6;
-    const page1 = page || 1;
-    
     Book.distinct('subjectHeading')
         .then((resp) => {
             res.status(200).send(resp)
@@ -283,10 +228,7 @@ router.post("/list_by_category", async (req, res) => {
         })
     }
 })
-
-
-
-
 module.exports = router;
+
 
 
