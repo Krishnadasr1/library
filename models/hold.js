@@ -4,14 +4,18 @@ const holdSchema = new mongoose.Schema({
     
    accessionNo: String,
    bookName:String,
+   author:String,
    cardNumber: String,
    userName: String,
+   callNo: String,
+   shelfNo : String,
    houseName: String,
    wardName: String,
    wardNumber: String,
    postOffice: String,
    pincode: String,
    phoneNumber: String,
+   subjectHeading: String,
   checkoutStatus:{
    type:String,
    default:"F"

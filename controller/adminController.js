@@ -6,6 +6,8 @@ const Admin = require("../models/admin");
 const Delivery = require("../models/delivery");
 const Book = require("../models/book");
 const User = require("../models/user");
+const pdf = require("pdfkit");
+
 
 router.post("/register", async (req, res) => {
   console.log("<........register admin........>");
@@ -111,11 +113,11 @@ router.get("/get_all_return", (req, res) => {
     });
 });
 
-router.post("/all_books", async (req, res) => {
-  console.log("<--------------Fetching all books-------------->");
+router.get("/all_books", async (req, res) => {
+  console.log("Fetching all books");
   
 
-    const { page } = req.body;
+    const  page  = req.body;
   
       const resPerPage = 50;
       const page1 = page || 1;
@@ -128,7 +130,6 @@ router.post("/all_books", async (req, res) => {
           res.status(200).send({
             CurrentPage: 1,
             TotalPages: 1,
-            Category: text,
             TotalBooks: numOfItems,
             data: resp
           });
@@ -147,7 +148,6 @@ router.post("/all_books", async (req, res) => {
           res.status(200).send({
             CurrentPage: page1,
             TotalPages: Math.ceil(numOfItems / resPerPage),
-            Category: text,
             TotalBooks: numOfItems,
             data: resp
           });
@@ -173,7 +173,7 @@ router.post("/add_new_book", (req, res) => {
     } else {
       const book = new Book(req.body);
       book.save();
-      res.save("Book added to the library.");
+      res.send("Book added to the library.");
     }
   })
   .catch((err) => {
@@ -184,7 +184,7 @@ router.post("/add_new_book", (req, res) => {
 });
 
 router.put("/update_book/:book_Id", (req, res) => {
-  console.log("<-----------Update Book Details------------>");
+  console.log("Update Book Details");
   const data = req.body;
   Book.findByIdAndUpdate({ _id : req.params.book_Id }, data)
   .then(() => {
@@ -198,7 +198,7 @@ router.put("/update_book/:book_Id", (req, res) => {
 });
 
 router.delete("/delete_book/:book_Id", (req, res) => {
-  console.log("<------------Delete a Book------------->");
+  console.log("delete a book");
 
   Book.find({ _id : req.params.book_Id})
   .then((books) => {
@@ -229,8 +229,8 @@ router.delete("/delete_book/:book_Id", (req, res) => {
 
 //Search book by titleName, authorName, accessionNo, subject.
 
-router.get("/search_books", async (req, res) => {
-  console.log("<........Search book by bookTitle, author Name, accessionNo, subjectHeading........>")
+router.post("/search_books", async (req, res) => {
+  console.log("Search book by bookTitle, author Name, accessionNo, subjectHeading")
   
   const { text, page } = req.body;
   
@@ -245,7 +245,7 @@ router.get("/search_books", async (req, res) => {
       ] });
 
       if (numOfItems < resPerPage) {
-          // const txt = text
+          console.log(".......................")
         await Book.find({ $or : [
           { bookTitle : { '$regex': `^` + text, '$options': 'i' } },
           { author : { '$regex': `^` + text, '$options': 'i' } },
@@ -256,9 +256,10 @@ router.get("/search_books", async (req, res) => {
           res.status(200).send({
             CurrentPage: 1,
             TotalPages: 1,
-            Category: text,
+            Category : text,
             TotalBooks: numOfItems,
-            data: resp
+            data: resp,
+            
           });
         })
         .catch((err) => {
@@ -268,6 +269,7 @@ router.get("/search_books", async (req, res) => {
 
       } else {
           //{'$regex' : '^string', '$options' : 'i'}
+          
         await Book.find({ $or : [
             { bookTitle : { '$regex': `^` + text, '$options': 'i' } },
             { author : { '$regex': `^` + text, '$options': 'i' } },
@@ -322,10 +324,27 @@ router.put("update_user/:cardNumber", (req, res) => {
 });
 
 
+
+
+router.put("update/:_id",async(req,res) =>{
+  console.log("update");
+  const data = req.body;
+
+  User.findByIdAndUpdate({_id : req.params._id} ,data)
+  .then(user =>{
+    res.send({ message : "updated successfully",user});
+  })
+  .catch(err =>{
+    res.send({message: "error"});
+    console.log(err);
+  });
+});
+
+
 //Search member using membershipNo(cardNumber) and Name.
 
-router.get("/search_users", async (req, res) => {
-  console.log("<........Search User/Member by Name, cardNumber........>")
+router.post("/search_users", async (req, res) => {
+  console.log("Search User")
   
   const { text, page } = req.body;
   
@@ -442,6 +461,63 @@ router.delete("/delete_deliveryPerson/:deliveryPerson_Id", (req, res) => {
 //Download and print book list by StockNo, author, title, subject.
 
 //Book history and members history search.
+
+// router.post("/search_all_books", async( req,res ) => {
+// console.log("searching books")
+
+// const {text,page} = req.body;
+// if (text!=""){
+//   const resPerPage = 6;
+//   const page1 = page || 1;
+//   const numOfItems = await Book.count({
+//     $or : [{bookTitle :bookTitle},{author:author},{accessionNo:accessionNo}]
+//   });
+
+//   if (numOfItems<resPerPage){
+//     await Book.find({ $or: [{bookTitle:bookTitle},{author:author},{accessionNo:accessionNo}]
+//     })
+//     .then((resp) =>{
+//       res.status(200).send({
+//         CurrentPage: 1,
+//         TotalPages : 1,
+//         Category:text,
+//         data:resp,
+//       });
+//     })
+//   }
+// }
+// })
+
+
+
+
+
+router.get('/questions-pdf',async (req, res)=>{
+  const data = await User.find()
+  const pdfDoc = new pdf();
+  const fieldstoinclude = ['email','firstName','lastName','cardNumber'];
+  // fieldstoinclude.forEach(fields =>{
+  //   pdfDoc.text(fields)
+  //    });
+      data.forEach(User =>{
+      fieldstoinclude.forEach(fields => {
+        pdfDoc.text(`${fields} : ${User[fields].toString()}`);
+      });
+      pdfDoc.text('\n');
+     });
+// Add content to the PDF document
+// pdfDoc.text("Qus");
+// pdfDoc.text(data)
+// End the PDF document
+pdfDoc.end();
+// Send the PDF document to the user as a download
+res.setHeader('Content-Type', 'application/pdf');
+res.setHeader('Content-Disposition', 'attachment; filename="document.pdf"');
+pdfDoc.pipe(res);
+});
+
+
+
 
 
 module.exports = router;

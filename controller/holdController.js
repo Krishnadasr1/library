@@ -88,11 +88,11 @@ router.get("/cancel_hold_admin/:hold_Id", async (req, res) => {
     })
 })
 router.get("/get_list", (req, res) => {
-    console.log("<........get hold list all........>")
+    console.log("<get hold list all>")
     Hold.find({ holdStatus: "T" }).then(resp => {
         res.status(200).send(resp)
     }).catch(err => {
-        console.log("<........error........>" + err)
+        console.log("<error.>" + err)
         res.status(400).send(err)
     })
 })
@@ -108,5 +108,20 @@ router.get("/get_active_hold_list_user/:cardNumber", (req, res) => {
         res.status(400).send(err)
     })
 })
+
+// router.get("/user_hold_book_details/:cardNumber" ,(req,res) =>{
+//     console.log(".....hold book details.........")
+//     .find({
+//         $and: [{cardNumber:req.params.cardNumber},{holdStatus: "T"}]
+//     })
+//         .then((resp)=>{
+//           res.status(200).send(res)
+//         })
+//         .catch((err)=>{
+//             console.log("error",err)
+//             res.status(400).send(err)
+//         })
+    
+// })
 
 module.exports = router;

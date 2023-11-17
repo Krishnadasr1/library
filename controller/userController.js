@@ -243,6 +243,42 @@ router.get("/get_by_cardNumber/:number", (req, res) => {
       res.status(400).send(err)
     });
 })
+
+
+router.get("/get_by_date/:dateEnrolled", (req, res) => {
+  console.log("<........user get by the date enrolled........>")
+  User.find({ dateEnrolled: req.params.dateEnrolled })
+    .then((user) => {
+      if (user.length < 1) {
+        res.status(404).send("No user found")
+      } else {
+        res.status(200).send(user)
+      }
+
+    })
+    .catch((err) => {
+      console.log("<........error........>" + err)
+      res.status(400).send(err)
+    });
+})
+
+router.get("/get_by_membershipNo/:number", (req, res) => {
+  console.log("<........get by membership number........>")
+  User.find({ membershipNo: req.params.number })
+    .then((user) => {
+      if (user.length < 1) {
+        res.status(404).send("No user found")
+      } else {
+        res.status(200).send(user)
+      }
+
+    })
+    .catch((err) => {
+      console.log("<........error........>" + err)
+      res.status(400).send(err)
+    });
+})
+
 router.get("/get_by_phoneNumber/:number", (req, res) => {
   console.log("<........user get by card number........>")
   User.find({ phoneNumber: req.params.number })
@@ -260,7 +296,7 @@ router.get("/get_by_phoneNumber/:number", (req, res) => {
     });
 })
 router.get("/get_all_valid_users", (req, res) => {
-  console.log("<........get all valid users........>")
+  console.log("get all valid users")
   User.find({ cardNumber: { $not: { $eq: null } } })
     .then((resp) => {
       res.status(200).send(resp)
@@ -308,7 +344,7 @@ router.post("/accept_membership_request", (req, res) => {
     });
 })
 router.post("/update", (req, res) => {
-  console.log("<........update user........>")
+  console.log("<update user")
   const data = req.body
   User.find({ phoneNumber: data.phoneNumber }).exec()
     .then(user => {
@@ -363,7 +399,7 @@ router.get("/checkout_by_user/:cardNumber", (req, res) => {
     })
 })
 router.get("/delete/:cardNumber", async (req, res) => {
-  console.log("<........delete user........>")
+  console.log("delete user")
   User.find({ cardNumber: req.params.cardNumber })
     .then((user) => {
       if (user.length < 1) {

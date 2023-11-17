@@ -81,7 +81,20 @@ const userSchema = new mongoose.Schema({
     expiryDate:{
         type:Date,
     },
-  
+
+    age: {
+        type : String
+    },
+
+
+    gender : {
+        type: String
+    },
+
+    membershipNo : {
+        type: String
+    },
+
     status: {
         type: String,
         default:"T"

@@ -227,6 +227,8 @@ router.get("/books_in_dp_hand", (req, res) => {
 router.get("/get_all_category", (req, res) => {
     console.log("<........get all category........>")
 
+    const {page} = req.body; 
+
     const resPerPage = 6;
     const page1 = page || 1;
     

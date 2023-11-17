@@ -1,4 +1,4 @@
- {
+{
   "name": "amc-backoffice",
   "version": "1.0.0",
   "description": "",
@@ -26,6 +26,7 @@
     "express": "^4.18.1",
     "mongodb": "^4.8.1",
     "mongoose": "^6.5.1",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "pdfkit": "^0.14.0"
   }
 }
