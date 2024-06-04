@@ -4,6 +4,7 @@ const Hold = require("../models/hold");
 const DP = require("../models/dp");
 
 
+
 const express = require("express");
 const router = express.Router();
 
@@ -19,9 +20,13 @@ router.post("/place_hold", async (req, res) => {
                     if (book.length < 1) {
                         res.status(400).send("book not found")
                     }
+                    else if ((book[0].category == "reference" || book[0].category == "Reference")) {
+                        res.status(406).send("reference book cannot be requested")
+                    }
                     else if ((book[0].hold == "T" && book[0].checkout == "T")) {
                         res.status(405).send("book already on hold")
                     }
+                    
                     else {
                         DP.find({ wardNumber: data.wardNumber })
                             .then((user) => {
@@ -109,6 +114,21 @@ router.get("/get_active_hold_list_user/:cardNumber", (req, res) => {
     })
 })
 
+router.get("/hold_details/:_id", (req, res) => {
+    console.log("<hold detail>")
+    Hold.find({
+        $and: [{ _id: req.params._id },
+        { holdStatus: "T" }]
+    }).then((resp) => {
+        res.status(200).send(resp)
+    }).catch(err => {
+        console.log("<........error........>" + err)
+        res.status(400).send(err)
+    })
+})
+
+
+
 // router.get("/user_hold_book_details/:cardNumber" ,(req,res) =>{
 //     console.log(".....hold book details.........")
 //     .find({
@@ -123,5 +143,7 @@ router.get("/get_active_hold_list_user/:cardNumber", (req, res) => {
 //         })
     
 // })
+
+
 
 module.exports = router;

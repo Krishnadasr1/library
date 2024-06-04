@@ -4,63 +4,63 @@ const deliverySchema = new mongoose.Schema({
     
     userName: {
         type: String,
-        required: true
+        // required: true
     },
     cardNumber: {
         type: String,
-        required: true
+        // required: true
     },
     houseName: {
         type: String,
-        required: true,
+        // required: true,
     },
     wardName: {
         type: String,
-        required: true,
+        // required: true,
     },
     wardNumber: {
         type: Number,
-        required: true,
+        // required: true,
     },
     postOffice: {
         type: String,
-        required: true,
+        // required: true,
     },
     district: {
         type: String,
-        required: true,
+        // required: true,
         default:"Alappuzha"
     },
   
     pinCode: {
         type: String,
-        required: true,
+        // required: true,
     },
     phoneNumber: {
         type: String,
-        required: true,
-        match: /^\d{10}$/
+        // required: true,
+        // match: /^\d{10}$/
     },
     bookName:{
         type:String,
-        required:true
+        // required:true
     },
     accessionNo:{
         type:String,
-        required:true
+        // required:true
     },
     barcode:{
         type:String,
         unique:true,
-        required:true
+        // required:true
     },
     holdId:{
         type:String,
-        required:true
+         required:true
     },
     deliveryPerson:{
         type:String,
-        required:true
+        // required:true
     },
     checkoutStatus: {
         type: String,

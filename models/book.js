@@ -21,6 +21,8 @@ const bookSchema = new mongoose.Schema({
   description: String,
   category:String,
   shelfNo : String,
+  translatedWork : String,
+  stockNo:String,
 
 trends:{
     type:String,

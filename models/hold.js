@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const moment = require('moment')
 
 const holdSchema = new mongoose.Schema({
     
@@ -23,8 +24,18 @@ const holdSchema = new mongoose.Schema({
   holdStatus:{
     type:String,
     default:"T"
-  }
+  },
+  requestDate:{
+    type: String,
+    
+},
    
 }, { timestamps: true })
+
+holdSchema.pre('save', function(next) {
+  // Set requestDate to the current date and time in 'DD-MM-YY' format
+  this.requestDate = moment().format('YYYY-MM-DD');
+  next();
+});
 
 module.exports= mongoose.model('Hold', holdSchema)

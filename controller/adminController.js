@@ -7,6 +7,16 @@ const Delivery = require("../models/delivery");
 const Book = require("../models/book");
 const User = require("../models/user");
 const pdf = require("pdfkit");
+const table = require("pdfkit-table")
+const fs = require("fs");
+const xml = require('xml');
+const { log, error } = require("console");
+const xmlString = xml('xmlObject', 'options');
+const XLSX = require("xlsx");
+const moment= require("moment");
+const hold = require("../models/hold");
+const dp = require("../models/dp");
+
 
 
 router.post("/register", async (req, res) => {
@@ -183,6 +193,57 @@ router.post("/add_new_book", (req, res) => {
 
 });
 
+router.post("/add_new_dp", (req, res) => {
+  console.log("<-----------Add New dp----------->");
+
+  dp.find({ memberId : req.body.memberId})
+  .then((dps) => {
+    if(dps.length >= 1) {
+      res.send("dp already exist.");
+    } else {
+      const DP = new dp(req.body);
+      DP.status="T"
+      DP.save();
+      res.send("dp added.");
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    res.send("Error");
+  });
+
+});
+
+router.post("/add_new_user", (req, res) => {
+  console.log("<-----------Add New user------------>");
+
+  User.find({ cardNumber : req.body.cardNumber})
+  .then((users) => {
+    if(users.length >= 1) {
+      res.send("user already exist.");
+    } else {
+      const user = new User(req.body);
+      user.otpFirstTimeVerifed="true";
+      user.save();
+      res.send("user added.");
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    res.send("Error");
+  });
+
+});
+
+router.post("/add_new_order",(req,res)=>{
+
+  console.log("..place new order..");
+  const delivery = new Delivery(req.body);
+  delivery.save();
+  res.send("order placed");
+  
+});
+
 router.put("/update_book/:book_Id", (req, res) => {
   console.log("Update Book Details");
   const data = req.body;
@@ -241,7 +302,8 @@ router.post("/search_books", async (req, res) => {
         { bookTitle : { '$regex': `^` + text, '$options': 'i' } },
         { author : { '$regex': `^` + text, '$options': 'i' } },
         { accessionNo : { '$regex': `^` + text, '$options': 'i' } },
-        { subjectHeading : { '$regex': `^` + text, '$options': 'i' } }
+        { subjectHeading : { '$regex': `^` + text, '$options': 'i' } },
+        { category : { '$regex': `^` + text, '$options': 'i' } }
       ] });
 
       if (numOfItems < resPerPage) {
@@ -250,7 +312,8 @@ router.post("/search_books", async (req, res) => {
           { bookTitle : { '$regex': `^` + text, '$options': 'i' } },
           { author : { '$regex': `^` + text, '$options': 'i' } },
           { accessionNo : { '$regex': `^` + text, '$options': 'i' } },
-          { subjectHeading : { '$regex': `^` + text, '$options': 'i' } }
+          { subjectHeading : { '$regex': `^` + text, '$options': 'i' } },
+          { category : { '$regex': `^` + text, '$options': 'i' } }
         ] })
         .then((resp) => {
           res.status(200).send({
@@ -274,7 +337,8 @@ router.post("/search_books", async (req, res) => {
             { bookTitle : { '$regex': `^` + text, '$options': 'i' } },
             { author : { '$regex': `^` + text, '$options': 'i' } },
             { accessionNo : { '$regex': `^` + text, '$options': 'i' } },
-            { subjectHeading : { '$regex': `^` + text, '$options': 'i' } }
+            { subjectHeading : { '$regex': `^` + text, '$options': 'i' } },
+            { category : { '$regex': `^` + text, '$options': 'i' } }
         ] })
         .skip((resPerPage * page1) - resPerPage)
         .limit(resPerPage)
@@ -307,10 +371,11 @@ router.post("/search_books", async (req, res) => {
 
 //Membership details edit , delete.
 
-router.put("update_user/:cardNumber", (req, res) => {
+router.put("/update_user/:cardNumber", (req, res) => {
   console.log("<-----------Update User Details------------>");
   
   const data = req.body;
+  console.log(data)
 
   User.findOneAndUpdate({ cardNumber : req.params.cardNumber}, data)
   .then(user => {
@@ -326,19 +391,19 @@ router.put("update_user/:cardNumber", (req, res) => {
 
 
 
-router.put("update/:_id",async(req,res) =>{
-  console.log("update");
-  const data = req.body;
+// router.put("/update/:_id",async(req,res) =>{
+//   console.log("update");
+//   const data = req.body;
 
-  User.findByIdAndUpdate({_id : req.params._id} ,data)
-  .then(user =>{
-    res.send({ message : "updated successfully",user});
-  })
-  .catch(err =>{
-    res.send({message: "error"});
-    console.log(err);
-  });
-});
+//   User.findByIdAndUpdate({_id : req.params._id} ,data)
+//   .then(user =>{
+//     res.send({ message : "updated successfully",user});
+//   })
+//   .catch(err =>{
+//     res.send({message: "error"});
+//     console.log(err);
+//   });
+// });
 
 
 //Search member using membershipNo(cardNumber) and Name.
@@ -349,12 +414,14 @@ router.post("/search_users", async (req, res) => {
   const { text, page } = req.body;
   
   if (text != "") {
-      const resPerPage = 6;
+      const resPerPage = 20;
       const page1 = page || 1;
       const numOfItems = await User.count({ $or : [
         { cardNumber : { '$regex': `^` + text, '$options': 'i' } },
         { firstName : { '$regex': `^` + text, '$options': 'i' } },
-        { lastName : { '$regex': `^` + text, '$options': 'i' } }
+        { lastName : { '$regex': `^` + text, '$options': 'i' } },
+        { wardName : { '$regex': `^` + text, '$options': 'i' } },
+        { dateEnrolled : { '$regex': `^` + text, '$options': 'i' } }
       ] });
 
       if (numOfItems < resPerPage) {
@@ -362,7 +429,9 @@ router.post("/search_users", async (req, res) => {
         await User.find({ $or : [
           { cardNumber : { '$regex': `^` + text, '$options': 'i' } },
           { firstName : { '$regex': `^` + text, '$options': 'i' } },
-          { lastName : { '$regex': `^` + text, '$options': 'i' } }
+          { lastName : { '$regex': `^` + text, '$options': 'i' } },
+          { wardName : { '$regex': `^` + text, '$options': 'i' } },
+          { dateEnrolled : { '$regex': `^` + text, '$options': 'i' } }
         ] })
         .then((resp) => {
           res.status(200).send({
@@ -383,7 +452,9 @@ router.post("/search_users", async (req, res) => {
         await User.find({ $or : [
             { cardNumber : { '$regex': `^` + text, '$options': 'i' } },
             { firstName : { '$regex': `^` + text, '$options': 'i' } },
-            { lastName : { '$regex': `^` + text, '$options': 'i' } }
+            { lastName : { '$regex': `^` + text, '$options': 'i' } },
+            { wardName : { '$regex': `^` + text, '$options': 'i' } },
+            { dateEnrolled : { '$regex': `^` + text, '$options': 'i' } }
         ] })
         .skip((resPerPage * page1) - resPerPage)
         .limit(resPerPage)
@@ -393,6 +464,65 @@ router.post("/search_users", async (req, res) => {
             TotalPages: Math.ceil(numOfItems / resPerPage),
             Category: text,
             noOfUsers: numOfItems,
+            data: resp
+          });
+        })
+        .catch((err) => {
+          console.log("<........error........>"+err)
+          res.status(500).send("Something went wrong")
+        });
+      }
+
+  } else {
+    res.status(404).send({ message: "Please enter a category" });
+  }
+
+});
+
+router.post("/search_request", async (req, res) => {
+  console.log("Searching")
+  
+  const { text, page } = req.body;
+  
+  if (text != "") {
+      const resPerPage = 10;
+      const page1 = page || 1;
+      const numOfItems = await hold.count({ $or : [
+        { requestDate : { '$regex': `^` + text, '$options': 'i' } }
+      ] });
+
+      if (numOfItems < resPerPage) {
+          // const txt = text
+        await hold.find({ $or : [
+          { requestDate : { '$regex': `^` + text, '$options': 'i' } }
+        ] })
+        .then((resp) => {
+          res.status(200).send({
+            CurrentPage: 1,
+            TotalPages: 1,
+            Category: text,
+            noOfreq: numOfItems,
+            data: resp
+          });
+        })
+        .catch((err) => {
+          console.log("<........error........>"+err);
+          res.status(500).send("Something went wrong")
+        });
+
+      } else {
+          //{'$regex' : '^string', '$options' : 'i'}
+        await User.find({ $or : [
+            { requestDate : { '$regex': `^` + text, '$options': 'i' } }
+        ] })
+        .skip((resPerPage * page1) - resPerPage)
+        .limit(resPerPage)
+        .then(async (resp) => {
+          res.status(200).send({
+            CurrentPage: page1,
+            TotalPages: Math.ceil(numOfItems / resPerPage),
+            Category: text,
+            noOfreq: numOfItems,
             data: resp
           });
         })
@@ -434,7 +564,7 @@ router.put("/update_delivery_person/:deliverPerson_Id", (req, res) => {
   
   const data = req.body;
 
-  DP.findByIdAndUpdate({ _id : req.params.deliverPerson_Id}, data)
+  dp.findByIdAndUpdate({ _id : req.params.deliverPerson_Id}, data)
   .then(user => {
     res.send({ message : "Delivery person details updated successfully.", user});
   })
@@ -453,8 +583,6 @@ router.delete("/delete_deliveryPerson/:deliveryPerson_Id", (req, res) => {
 
 
 //StockNo , edit stockNo.
-
-//Set return date for books.
 
 //List books by StockNo, author, title, subject.
 
@@ -492,29 +620,237 @@ router.delete("/delete_deliveryPerson/:deliveryPerson_Id", (req, res) => {
 
 
 
-router.get('/questions-pdf',async (req, res)=>{
-  const data = await User.find()
-  const pdfDoc = new pdf();
-  const fieldstoinclude = ['email','firstName','lastName','cardNumber'];
-  // fieldstoinclude.forEach(fields =>{
-  //   pdfDoc.text(fields)
-  //    });
-      data.forEach(User =>{
-      fieldstoinclude.forEach(fields => {
-        pdfDoc.text(`${fields} : ${User[fields].toString()}`);
-      });
-      pdfDoc.text('\n');
-     });
-// Add content to the PDF document
-// pdfDoc.text("Qus");
-// pdfDoc.text(data)
-// End the PDF document
-pdfDoc.end();
-// Send the PDF document to the user as a download
-res.setHeader('Content-Type', 'application/pdf');
-res.setHeader('Content-Disposition', 'attachment; filename="document.pdf"');
-pdfDoc.pipe(res);
+router.get('/exportUsersToExcel',  async (req, res) => {
+  const { field, value } = req.query;
+
+  try {
+    let query = {};
+
+    if (field && value) {
+      query[field] = { $regex: new RegExp(value, 'i') };
+    }
+    console.log(req.query)
+
+    const users = await User.find(query);
+
+    if (users.length !== 0) {
+      try {
+        // Prepare headers for the Excel file dynamically based on User model fields
+        const headers = Object.keys(User.schema.paths);
+
+        // Prepare values for the Excel file
+        const values = [
+          ['REPORT OF USERS'],
+          headers,
+          ...users.map(user => headers.map(header => formatCellValue(user[header])))
+        ];
+
+        // Generate the Excel file
+        const worksheet = XLSX.utils.aoa_to_sheet(values);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        // Convert the workbook to a buffer
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+        // Set the appropriate headers for the response
+        res.setHeader('Content-Disposition', 'attachment; filename="users.xlsx"');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        res.setHeader('Content-Length', buffer.length);
+
+        // Send the buffer as the response
+        res.send(buffer);
+
+      } catch (error) {
+        console.error('Failed to generate Excel file:', error);
+        res.status(500).send('Failed to generate Excel file');
+      }
+    } else {
+      res.status(404).json({ message: 'No users found for the specified criteria' });
+    }
+
+  } catch (error) {
+    console.error('Failed to fetch users from MongoDB:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
+
+
+router.get('/exportholdToExcel',  async (req, res) => {
+  const { field, value } = req.query;
+
+  try {
+    let query = {};
+
+    if (field && value) {
+      query[field] = { $regex: new RegExp(value, 'i') };
+    }
+    console.log(req.query)
+
+    const holds = await hold.find(query);
+
+    if (holds.length !== 0) {
+      try {
+        // Prepare headers for the Excel file dynamically based on User model fields
+        const headers = Object.keys(hold.schema.paths);
+
+        // Prepare values for the Excel file
+        const values = [
+          ['REPORT OF HOLD'],
+          headers,
+          ...holds.map(hold => headers.map(header => formatCellValue(hold[header])))
+        ];
+
+        // Generate the Excel file
+        const worksheet = XLSX.utils.aoa_to_sheet(values);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        // Convert the workbook to a buffer
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+        // Set the appropriate headers for the response
+        res.setHeader('Content-Disposition', 'attachment; filename="users.xlsx"');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        res.setHeader('Content-Length', buffer.length);
+
+        // Send the buffer as the response
+        res.send(buffer);
+
+      } catch (error) {
+        console.error('Failed to generate Excel file:', error);
+        res.status(500).send('Failed to generate Excel file');
+      }
+    } else {
+      res.status(404).json({ message: 'No users found for the specified criteria' });
+    }
+
+  } catch (error) {
+    console.error('Failed to fetch users from MongoDB:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.get('/exportdpToExcel',  async (req, res) => {
+  const { field, value } = req.query;
+
+  try {
+    let query = {};
+
+    if (field && value) {
+      query[field] ={ $regex: new RegExp(value, 'i') };
+    }
+    console.log(req.query)
+
+    const dps = await dp.find(query);
+
+    if (dps.length !== 0) {
+      try {
+        // Prepare headers for the Excel file dynamically based on User model fields
+        const headers = Object.keys(dp.schema.paths);
+
+        // Prepare values for the Excel file
+        const values = [
+          ['REPORT OF DELIVERY PARTNERS'],
+          headers,
+          ...dps.map(dp => headers.map(header => formatCellValue(dp[header])))
+        ];
+
+        // Generate the Excel file
+        const worksheet = XLSX.utils.aoa_to_sheet(values);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        // Convert the workbook to a buffer
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+        // Set the appropriate headers for the response
+        res.setHeader('Content-Disposition', 'attachment; filename="users.xlsx"');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        res.setHeader('Content-Length', buffer.length);
+
+        // Send the buffer as the response
+        res.send(buffer);
+
+      } catch (error) {
+        console.error('Failed to generate Excel file:', error);
+        res.status(500).send('Failed to generate Excel file');
+      }
+    } else {
+      res.status(404).json({ message: 'No users found for the specified criteria' });
+    }
+
+  } catch (error) {
+    console.error('Failed to fetch users from MongoDB:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.get('/exportBooksToExcel',  async (req, res) => {
+  const { field, value } = req.query;
+
+  try {
+    let query = {};
+
+    if (field && value) {
+      query[field] = { $regex: new RegExp(value, 'i') };
+    }
+    console.log(req.query)
+
+    const books = await Book.find(query);
+
+    if (books.length !== 0) {
+      try {
+        // Prepare headers for the Excel file dynamically based on User model fields
+        const headers = Object.keys(Book.schema.paths);
+
+        // Prepare values for the Excel file
+        const values = [
+          ['REPORT OF BOOKS'],
+          headers,
+          ...books.map(book => headers.map(header => formatCellValue(book[header])))
+        ];
+
+        // Generate the Excel file
+        const worksheet = XLSX.utils.aoa_to_sheet(values);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        // Convert the workbook to a buffer
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+        // Set the appropriate headers for the response
+        res.setHeader('Content-Disposition', 'attachment; filename="users.xlsx"');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        res.setHeader('Content-Length', buffer.length);
+
+        // Send the buffer as the response
+        res.send(buffer);
+
+      } catch (error) {
+        console.error('Failed to generate Excel file:', error);
+        res.status(500).send('Failed to generate Excel file');
+      }
+    } else {
+      res.status(404).json({ message: 'No users found for the specified criteria' });
+    }
+
+  } catch (error) {
+    console.error('Failed to fetch users from MongoDB:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Helper function to format cell values, especially dates
+function formatCellValue(value) {
+  if (value instanceof Date) {
+    // Format date as per your requirement
+    return value.toISOString().split('T')[0];
+  }
+  return value || '';
+}
+
+
 
 
 

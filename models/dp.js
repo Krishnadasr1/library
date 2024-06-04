@@ -13,7 +13,7 @@ const dpSchema = new mongoose.Schema({
     },
     email:{
         type:String,
-        mmatch: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+        // mmatch: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
 
     },
     password: {
@@ -35,7 +35,7 @@ const dpSchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
          required: true,
-        match: /^\d{10}$/
+        // match: /^\d{10}$/
     },
     checkoutList: {
         type: Array

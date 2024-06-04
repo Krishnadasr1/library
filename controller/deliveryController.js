@@ -35,7 +35,7 @@ router.post("/place_checkout", (req, res) => {
                 Hold.findOneAndUpdate({ _id:data.holdId }, { checkoutStatus : "T" })
                   .then(resp1 => {
                     Book.findOneAndUpdate({ accessionNo: data.accessionNo }, { checkout: "T" }).exec()
-                    res.status(200).send(resp)
+                    res.status(200).send({message:"order placed successfully",resp})
                   }).catch(err => {
                     console.log("<........error........>"+err)
                     Delivery.findOneAndDelete({ _id: delivery._id }).exec();
@@ -79,6 +79,33 @@ router.get("/get_by_delivery_person/:deliveryPerson_Id", (req, res) => {
       res.status(400).send(err);
     })
 })
+
+
+router.get("/book_history/:bookName", (req, res) => {
+  console.log("-----book details----")
+  Delivery.find({bookName: req.params.bookName})
+  .then((resp) => {
+      res.status(200).send(resp)
+  }).catch(err => {
+      console.log("<........error........>" + err)
+      res.status(400).send(err)
+  })
+})
+
+router.get("/get_all_return", (req, res) => {
+  console.log("<........all return.......>")
+  Delivery.find({
+    $and: [{ checkoutStatus: "F" },{userInHand: "F"},{dpInHand: "F"},{checkinStatus: "F"}]
+  })
+    .then((resp) => {
+      res.status(200).send(resp);
+    }).catch((err) => {
+      console.log("<........error........>"+err)
+      res.status(400).send(err);
+    })
+})
+
+
 
 
 

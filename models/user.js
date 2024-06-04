@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
-
+const moment = require('moment')
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
-        match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+        // match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
     },
     image:{
         type:String
@@ -41,6 +41,9 @@ const userSchema = new mongoose.Schema({
     wardNumber: {
         type: Number,
     },
+    wardCouncillor : {
+        type: String,
+    },
     postOffice: {
         type: String,
     },
@@ -53,11 +56,16 @@ const userSchema = new mongoose.Schema({
     pincode: {
         type: String,
     },
+
+    Address: {
+        type: String,
+    },
+
     phoneNumber: {
         type: String,
         required: true,
-        unique:true,
-        match: /^\d{10}$/
+        // unique:true,
+        // match: /^\d{10}$/
     },
     otp:{
         type:String,
@@ -74,8 +82,8 @@ const userSchema = new mongoose.Schema({
         type:Date,
     },
     dateEnrolled:{
-        type:Date,
-        default:Date.now()
+        type:String,
+        
         
     },
     expiryDate:{
@@ -86,21 +94,37 @@ const userSchema = new mongoose.Schema({
         type : String
     },
 
-
-    gender : {
-        type: String
-    },
-
-    membershipNo : {
-        type: String
-    },
-
     status: {
         type: String,
         default:"T"
+    },
+
+    receiptNo: {
+        type: String
+    },
+
+    receiptDate : {
+        type: Date
+    },
+    depositAmount:{
+        type:String
+    },
+    job:{
+        type:String,
+    },
+
+    recommendation:{
+        type:String,
+
     }
 
 
 }, { timestamps: true })
+
+userSchema.pre('save', function(next) {
+    // Set requestDate to the current date and time in 'DD-MM-YY' format
+    this.dateEnrolled = moment().format('DD-MM-YYYY');
+    next();
+  });
 
 module.exports= mongoose.model('User', userSchema)

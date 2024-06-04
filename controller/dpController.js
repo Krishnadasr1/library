@@ -211,9 +211,11 @@ router.get("/get_delivery_person_applications", (req, res) => {
 router.post("/approve_delivery_person", (req, res) => {
   console.log("<........approve delivery person........>")
   const { data } = req.body
+  console.log(req.body.phoneNumber,req.body.wardNumber)
   DP.findOneAndUpdate({ phoneNumber: req.body.phoneNumber }, { wardNumber: req.body.wardNumber, status: "T" })
     .then((resp) => {
-      res.status(200).send("Approved the delivery person")
+      res.status(200).send(resp)
+      console.log(resp)
     })
     .catch((err) => {
       console.log("<........error........>" + err)
@@ -260,7 +262,7 @@ router.get("/delete/:phoneNumber", (req, res) => {
               }
             })
             if (status == "F") {
-              res.status(405).send("checkin pending. Return the books before deleting the Delivery partner")
+              res.status(405).send("checking pending. Return the books before deleting the Delivery partner")
             } else {
               //res.status(200).send("ready to delete")
               DP.findOneAndDelete({ phoneNumber: req.params.phoneNumber })

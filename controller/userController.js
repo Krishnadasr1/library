@@ -5,6 +5,7 @@ const router = express.Router();
 const User = require("../models/user");
 const Hold = require("../models/hold");
 const Delivery = require("../models/delivery");
+const moment = require("moment");
 
 // const multer = require('multer')
 // const upload = multer({ dest: 'uploads/' })
@@ -24,6 +25,7 @@ router.post("/register", async (req, res) => {
         } else {
           console.log("resending otp")
           console.log("<.........resending otp for verification : register user.......>")
+          console.log("user[0].phoneNumber==",user[0].phoneNumber);
           const otpreq1 = {
             method: 'get',
             url: `${process.env.TWOFACTOR_URL}/${process.env.TWOFACTOR_API_KEY}/SMS/${user[0].phoneNumber}/AUTOGEN2`,
@@ -60,7 +62,7 @@ router.post("/register", async (req, res) => {
             .then(async (resp1) => {
               console.log(resp1.data.Status)
               if (resp1.data.Status == "Error") {
-                res.status(200).send({ "Success": "User Accepted", "Error": "OTP service stopped temporarily due to insufficient balance." })
+                res.status(200).send({ "Success": "User Accepted", "Error": "OTP service stopped temporarily ." })
               } else {
                 res.status(201).send({ "Success": "Resending OTP for verification" })
                 //check if it works , if works flush it in 2 mints
@@ -243,28 +245,106 @@ router.get("/get_by_cardNumber/:number", (req, res) => {
       res.status(400).send(err)
     });
 })
+router.post("/list_by_name", async (req, res) => {
+  console.log("user by name")
+  
+  const { text, page } = req.body;
+  
+  if (text != "") {
+      const resPerPage = 10;
+      const page1 = page || 1;
+      const numOfItems = await User.count({ $and : [
+        { firstName : { '$regex': `^` + text, '$options': 'i' } },
+        { lastName : { '$regex': `^` + text, '$options': 'i' } }
+      ] });
 
+      if (numOfItems < resPerPage) {
+          // const txt = text
+        await User.find({ $and : [
+          { firstName : { '$regex': `^` + text, '$options': 'i' } },
+          { lastName : { '$regex': `^` + text, '$options': 'i' } }
+        ] })
+        .then((resp) => {
+          res.status(200).send({
+            CurrentPage: 1,
+            TotalPages: 1,
+            Category: text,
+            noOfUsers: numOfItems,
+            data: resp
+          });
+        })
+        .catch((err) => {
+          console.log("<........error........>"+err);
+          res.status(500).send("Something went wrong")
+        });
+
+      } else {
+          //{'$regex' : '^string', '$options' : 'i'}
+        await User.find({ $and : [
+            { firstName : { '$regex': `^` + text, '$options': 'i' } },
+            { lastName : { '$regex': `^` + text, '$options': 'i' } }
+        ] })
+        .skip((resPerPage * page1) - resPerPage)
+        .limit(resPerPage)
+        .then(async (resp) => {
+          res.status(200).send({
+            CurrentPage: page1,
+            TotalPages: Math.ceil(numOfItems / resPerPage),
+            Category: text,
+            noOfUsers: numOfItems,
+            data: resp
+          });
+        })
+        .catch((err) => {
+          console.log("<........error........>"+err)
+          res.status(500).send("Something went wrong")
+        });
+      }
+
+  } else {
+    res.status(404).send({ message: "Please enter a category" });
+  }
+
+});
+
+// router.get("/get_by_dateEnrolled/:date", (req, res) => {
+//   console.log("<........user get by the date enrolled........>")
+//   User.find({ dateEnrolled: req.params.date})
+//     .then((user) => {
+//       if (user.length < 1) {
+//         res.status(404).send("No user found")
+//       } else {
+//         res.status(200).send(user)
+//       }
+
+//     })
+//     .catch((err) => {
+//       console.log("<........error........>" + err)
+//       res.status(400).send(err)
+//     });
+// })
 
 router.get("/get_by_date/:dateEnrolled", (req, res) => {
   console.log("<........user get by the date enrolled........>")
-  User.find({ dateEnrolled: req.params.dateEnrolled })
+  const Date = moment(req.params.dateEnrolled, 'DD-MM-YYYY').format('YYYY-MM-DD');
+
+  User.find({ dateEnrolled: Date })
     .then((user) => {
       if (user.length < 1) {
-        res.status(404).send("No user found")
+        res.status(404).send("No user found");
       } else {
-        res.status(200).send(user)
+        res.status(200).send(user);
       }
-
     })
     .catch((err) => {
-      console.log("<........error........>" + err)
-      res.status(400).send(err)
+      console.log("<........error........>" + err);
+      res.status(400).send(err);
     });
-})
+});
 
-router.get("/get_by_membershipNo/:number", (req, res) => {
-  console.log("<........get by membership number........>")
-  User.find({ membershipNo: req.params.number })
+router.get("/get_by_category/:category", (req, res) => {
+  console.log("<........user get by membershiptype........>")
+  User.find({ category: req.params.category })
     .then((user) => {
       if (user.length < 1) {
         res.status(404).send("No user found")
@@ -344,7 +424,7 @@ router.post("/accept_membership_request", (req, res) => {
     });
 })
 router.post("/update", (req, res) => {
-  console.log("<update user")
+  console.log("update user")
   const data = req.body
   User.find({ phoneNumber: data.phoneNumber }).exec()
     .then(user => {
@@ -466,7 +546,22 @@ router.get("/delete/:cardNumber", async (req, res) => {
     });
 })
 
+router.get("/get_all_user_category", (req, res) => {
+  console.log("<........get all category........>")
 
+  const {page} = req.body; 
+
+  const resPerPage = 6;
+  const page1 = page || 1;
+  
+  User.distinct('category')
+      .then((resp) => {
+          res.status(200).send(resp)
+      }).catch(err => {
+          console.log("<........error........>"+err)
+          res.status(500).send(err)
+      })
+})
 
 
 // router.post("/delete/:cardNumber", (req,res) =>{

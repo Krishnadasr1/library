@@ -115,6 +115,23 @@ router.get("/get_by_accessionNo/:accessionNo", (req, res) => {
             res.status(500).send(err)
         })
 })
+
+router.get("/get_by_id/:_id", (req, res) => {
+    console.log("<........get by id........>")
+    Book.find({ _id: req.params._id })
+        .then((resp) => {
+            if (resp != null) {
+                res.status(200).send(resp)
+            }
+            else {
+                res.status(404).send("No book with such id")
+            }
+        }).catch(err => {
+            console.log("<........error........>"+err)
+            res.status(500).send(err)
+        })
+})
+
 router.get("/get_trends", async (req, res) => {
     console.log("<........get trends........>")
     await Book.find({ trends: "1" })
